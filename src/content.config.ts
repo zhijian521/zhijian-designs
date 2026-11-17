@@ -23,8 +23,6 @@ const designs = defineCollection({
     colors: z.array(z.string().regex(/^#[0-9a-fA-F]{6}$/)).min(1),
     source: z.url({ protocol: /^https?$/ }).optional(),
     commit: z.string().optional(),
-    demo: z.boolean().default(false),
-    screenshots: z.array(z.object({ src: localPath, label: z.string() })).default([]),
   }),
 });
 

@@ -27,33 +27,35 @@ const { Content } = await render(design);
         ))}
       </div>
     </header>
-    <dl class="design-facts">
-      <div>
-        <dt>类型</dt>
-        <dd>
-          {data.category}
-          {data.demo && ' · 示例'}
-        </dd>
-      </div>
-      <div>
-        <dt>日期</dt>
-        <dd>
-          <time datetime={data.date}>{data.date}</time>
-        </dd>
-      </div>
-      <div>
-        <dt>版本</dt>
-        <dd>{data.version}</dd>
-      </div>
-      <div>
-        <dt>配色</dt>
-        <dd class="swatches">
+    <section class="design-overview" aria-label="作品信息">
+      <dl class="design-facts">
+        <div>
+          <dt>类型</dt>
+          <dd>{data.category}</dd>
+        </div>
+        <div>
+          <dt>日期</dt>
+          <dd>
+            <time datetime={data.date}>{data.date}</time>
+          </dd>
+        </div>
+        <div>
+          <dt>版本</dt>
+          <dd>{data.version}</dd>
+        </div>
+      </dl>
+      <div class="design-palette">
+        <h2>主题配色</h2>
+        <ul class="color-cards">
           {data.colors.map((color) => (
-            <span title={color} aria-label={color} style={{ background: color }}></span>
+            <li>
+              <span class="color-chip" style={{ background: color }} aria-hidden="true"></span>
+              <span class="color-value">{color}</span>
+            </li>
           ))}
-        </dd>
+        </ul>
       </div>
-    </dl>
+    </section>
     <PreviewFrame src={withBase(data.preview)} title={data.title} />
     <article class="prose detail-notes">
       <Content />
@@ -66,22 +68,5 @@ const { Content } = await render(design);
       )}
       {data.commit && <p class="commit">提交：{data.commit}</p>}
     </article>
-    {data.screenshots.length > 0 && (
-      <details class="screenshot-section">
-        <summary>
-          存档截图 <span>{data.screenshots.length}</span>
-        </summary>
-        <div class="screenshot-grid">
-          {data.screenshots.map((screenshot) => (
-            <figure>
-              <a href={withBase(screenshot.src)} target="_blank" rel="noopener noreferrer">
-                <img src={withBase(screenshot.src)} alt={screenshot.label} loading="lazy" />
-              </a>
-              <figcaption>{screenshot.label}</figcaption>
-            </figure>
-          ))}
-        </div>
-      </details>
-    )}
   </div>
 </SiteLayout>

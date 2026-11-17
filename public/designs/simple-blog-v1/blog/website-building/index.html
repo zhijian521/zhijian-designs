@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f8f8f5"><title>用腾讯云搭建个人网站 · 语无边</title><meta name="description" content="从域名、服务器到备案，记录用腾讯云与宝塔面板搭建网站的过程。"><meta name="keywords" content="腾讯云, 服务器, WebSite, 技术笔记, 语无边, 前端开发, 全栈开发, TypeScript, Node.js, CesiumJS, 三维可视化, WebGL, SEO, 性能优化, 服务器部署, 内网开发, VS Code, 浏览器 API, 简约设计, 技术博客, 个人博客"><meta name="author" content="语无边"><meta name="robots" content="noindex, follow"><link rel="icon" href="../../favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png"><link rel="manifest" href="../../manifest.json"><link rel="alternate" type="application/rss+xml" title="语无边" href="../../rss.xml"><link rel="preload" as="font" type="font/woff2" href="../../_astro/lxgw-wenkai-site.Bd1eF1JR.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="../../_astro/ibm-plex-mono-site.vmgI4gOW.woff2" crossorigin><meta property="og:type" content="article"><meta property="og:site_name" content="语无边"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="用腾讯云搭建个人网站"><meta property="og:description" content="从域名、服务器到备案，记录用腾讯云与宝塔面板搭建网站的过程。"><meta property="article:published_time" content="2024-05-29"><meta property="article:tag" content="腾讯云"><meta property="article:tag" content="服务器"><meta property="article:tag" content="WebSite"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="用腾讯云搭建个人网站"><meta name="twitter:description" content="从域名、服务器到备案，记录用腾讯云与宝塔面板搭建网站的过程。"><link rel="stylesheet" href="../../_astro/Base.CUemWIkK.css"></head><body><main class="page"><article class="article"><header class="article__header"><h1 class="article__title">用腾讯云搭建个人网站</h1><time class="article__date" datetime="2024-05-29">2024年5月29日</time><p class="article__description">从域名、服务器到备案，记录用腾讯云与宝塔面板搭建网站的过程。</p></header><div class="prose"><p>搭建一个属于自己的网站，是开发者探索互联网的一个有趣起点。</p>
+<p>这篇记录使用腾讯云轻量应用服务器与宝塔面板搭建个人网站的完整流程。选这个方案，一是域名和服务器能在同一个控制台管理，二是轻量服务器的活动价格对个人开发者足够友好。</p>
+<p>以下是搭建过程中的实际步骤与配置细节。</p>
+<hr>
+<h2>1. 域名准备</h2>
+<p>域名是网站在互联网上的标识，先在 <a href="https://buy.cloud.tencent.com/domain">腾讯云域名注册</a> 选购。</p>
+<p>按合规要求，新注册的域名需要关联实名认证信息模板，没有现成模板的话可以先在后台创建一个。</p>
+<p>后缀的选择：</p>
+<ul>
+<li><code>.cn</code>：国内解析速度和性价比都不错，适合作为首选。</li>
+<li><code>.com</code>：国际通用，认知度最高，价格略贵。</li>
+<li><code>.top</code>、<code>.xyz</code>：适合预算有限的实验性项目。</li>
+</ul>
+<h2>2. 服务器配置</h2>
+<p>个人博客或小型应用，轻量应用服务器（Lighthouse）是性价比较高的选择。</p>
+<p>配置建议 2 核 CPU、2 GB 内存、4 Mbps 带宽，系统镜像直接选「宝塔 Linux 面板」，可以省去手动配置 Web 面板的步骤。</p>
+<p>购买完成后，在控制台的服务器列表里记下公网 IP，后续解析域名和连接服务器都要用到。</p>
+<blockquote>
+<p>路径：控制台 → 轻量应用服务器 → 服务器列表 → 查看 IP</p>
+</blockquote>
+<h2>3. ICP 备案</h2>
+<p>服务器在境内机房时，域名需要通过 ICP 备案才能开通 80 和 443 端口。</p>
+<p>在腾讯云控制台搜索「备案管理」，按指引填写主体信息与网站信息，并用微信小程序完成人脸核验。</p>
+<blockquote>
+<p>路径：控制台 → 备案管理 → 开始备案</p>
+</blockquote>
+<p>几点经验：</p>
+<ul>
+<li>备案需要绑定已购买的境内服务器，所以要先买服务器再提交申请。</li>
+<li>各省管局审核时间不同，通常在 7 到 20 个工作日，规划建站时最好留出这段时间。</li>
+<li>备案通过后，需要在网页底部展示备案号，并链接至工信部网站（<a href="http://beian.miit.gov.cn">beian.miit.gov.cn</a>）。</li>
+<li>如果必须免备案，可以选中国香港或境外节点，但要权衡访问延迟与稳定性。</li>
+</ul>
+<h2>4. 域名解析</h2>
+<p>备案通过后即可配置解析，把域名流量指向服务器。</p>
+<blockquote>
+<p>路径：控制台 → 我的资源 → 域名注册 → 选择域名 → 解析</p>
+</blockquote>
+<p>添加两条 <code>A</code> 记录，记录值都填服务器公网 IP：主机记录 <code>@</code> 对应裸域名，主机记录 <code>www</code> 对应 www 子域名。</p>
+<h2>5. 服务器环境</h2>
+<p>要让面板能正常访问、运行环境能跑起来，还需要几步配置。</p>
+<h3>开放安全组端口</h3>
+<p>宝塔面板默认使用 <code>8888</code> 端口，需要在腾讯云控制台的防火墙里放行。</p>
+<blockquote>
+<p>路径：轻量应用服务器 → 防火墙 → 添加规则（放行 TCP 8888 端口）</p>
+</blockquote>
+<h3>获取面板初始凭证</h3>
+<p>在控制台登录服务器，执行下面的命令，会输出面板的登录地址、账号与密码：</p>
+<pre class="shiki shiki-themes github-light" style="--shiki-light:#24292e;--shiki-light-bg:#fff" tabindex="0"><code><span class="line"><span style="--shiki-light:#6F42C1">sudo</span><span style="--shiki-light:#032F62"> /etc/init.d/bt</span><span style="--shiki-light:#032F62"> default</span></span>
+<span class="line"></span></code></pre>
+<h3>安装运行环境</h3>
+<p>在浏览器打开输出的地址登录，按项目的技术栈选择一键安装：</p>
+<ul>
+<li>Web 服务器：推荐 Nginx，轻量且性能好。</li>
+<li>数据库：MySQL，静态站点可以不装。</li>
+<li>脚本语言：PHP，也可以按需部署 Node.js 或 Go 环境。</li>
+</ul>
+<p>建议登录后绑定宝塔账号，后续可以用面板提供的免费证书申请和数据备份功能。</p>
+<h2>6. 部署上线</h2>
+<h3>添加站点</h3>
+<blockquote>
+<p>路径：宝塔面板 → 网站 → 添加站点</p>
+</blockquote>
+<p>在弹出的窗口里填入域名，其他选项保持默认即可。</p>
+<h3>上传代码</h3>
+<p>创建站点后，点击对应的根目录路径进入文件管理器，把文件上传并解压，就能通过域名访问了。</p>
+<h2>7. 安全设置</h2>
+<p>建站的同时，服务器的安全初始化同样重要：</p>
+<ul>
+<li>更改面板默认端口：改掉 <code>8888</code>，并同步在腾讯云防火墙放行新端口、关闭原端口。</li>
+<li>更换默认账号与密码：不要沿用系统生成的弱口令。</li>
+<li>配置面板安全入口：自定义登录路径，避免被扫描器爆破。</li>
+</ul>
+<blockquote>
+<p>路径：宝塔面板 → 面板设置 → 安全设置</p>
+</blockquote>
+<hr>
+<h2>常见问题</h2>
+<ul>
+<li>域名解析不生效：先确认备案状态是否已同步，未备案的域名在境内服务器上会被拦截。DNS 刷新通常需要 10 分钟到几小时，可以用 <code>ping 你的域名</code> 检查是否指向了正确的 IP。</li>
+<li>面板或网站打不开：检查腾讯云控制台的「防火墙」与宝塔面板的「系统安全」是否都放行了对应端口，例如 80、443、8888。</li>
+</ul>
+<h2>成本参考</h2>
+<p>首年的预估支出：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>预估价格</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>域名（以 <code>.cn</code> 为例）</td>
+<td>约 30 元/年</td>
+<td>首年注册价格，续费略有浮动</td>
+</tr>
+<tr>
+<td>轻量服务器（活动特惠）</td>
+<td>约 88 元/年</td>
+<td>2 核 2G 4M 配置，续费会涨到约 200 元/年</td>
+</tr>
+<tr>
+<td>ICP 备案服务</td>
+<td>免费</td>
+<td>腾讯云提供免费的代备案服务</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>约 118 元/年起</td>
+<td>适合个人开发者与学生群体实践</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>写在最后</h2>
+<p>搭好网站只是第一步，后续的维护同样重要：用宝塔的计划任务定期把网站数据与数据库备份到对象存储或本地；通过面板内置的 Let's Encrypt 申请证书，全站启用 HTTPS；再把代码托管到 GitHub，用 CI/CD 自动部署。</p>
+<p>建站的过程，也是对网络协议与系统运维这些基础知识的一次实践。</p>
+<p>祝建站顺利，也期待在开源的世界里看到更多有趣的个人站点。</p>
+</div></article></main></body></html>

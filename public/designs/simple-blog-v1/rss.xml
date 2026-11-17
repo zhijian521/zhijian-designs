@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>语无边</title>
+        <link>https://yuwb.dev/</link>
+        <description>语无边的个人技术博客 — 追求简洁设计与美好事物，以代码与文字安静造物。涵盖前端开发、TypeScript、Node.js、CesiumJS 三维可视化、SEO 优化与建站部署。</description>
+        <language>zh-CN</language>
+        <lastBuildDate>Fri, 30 Oct 2026 00:00:00 GMT</lastBuildDate>
+        <atom:link href="https://yuwb.dev/rss.xml" rel="self" type="application/rss+xml" />
+        <item>
+            <title>梦幻养老助手</title>
+            <link>https://yuwb.dev/blog/mh-tool/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/mh-tool/</guid>
+            <pubDate>Fri, 30 Oct 2026 00:00:00 GMT</pubDate>
+            <description>一个记录梦幻西游端游收益、整理角色档案和养成进度的 Windows 桌面工具。</description>
+            <category>Rust</category>
+            <category>Tauri</category>
+            <category>Vue</category>
+            <category>桌面应用</category>
+        </item>
+        <item>
+            <title>CesiumJS 三维地球实践</title>
+            <link>https://yuwb.dev/blog/cesium-example/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/cesium-example/</guid>
+            <pubDate>Sun, 28 Jun 2026 00:00:00 GMT</pubDate>
+            <description>以陆家嘴为场景，展示航线动画、空域与天气效果，打开即可体验。</description>
+            <category>CesiumJS</category>
+            <category>WebGL</category>
+            <category>三维可视化</category>
+            <category>前端开发</category>
+        </item>
+        <item>
+            <title>关于我</title>
+            <link>https://yuwb.dev/blog/about-me/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/about-me/</guid>
+            <pubDate>Thu, 18 Jun 2026 00:00:00 GMT</pubDate>
+            <description>在代码与文字间记录生活，偶尔捣鼓游戏，把零散的想法变成小作品。</description>
+        </item>
+        <item>
+            <title>WebSocket 连接失败排查</title>
+            <link>https://yuwb.dev/blog/websocket-connection-failed-fix/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/websocket-connection-failed-fix/</guid>
+            <pubDate>Thu, 10 Jul 2025 00:00:00 GMT</pubDate>
+            <description>记录一次连接失败排查，定位并修复 Windows 防火墙的端口限制。</description>
+            <category>Windows 防火墙</category>
+            <category>WebSocket</category>
+            <category>Node.js</category>
+        </item>
+        <item>
+            <title>window.open 页签管理</title>
+            <link>https://yuwb.dev/blog/window-open-tab-management/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/window-open-tab-management/</guid>
+            <pubDate>Thu, 10 Jul 2025 00:00:00 GMT</pubDate>
+            <description>整理 window.open 的打开、复用与切换，说明窗口关闭的使用限制。</description>
+            <category>前端开发</category>
+            <category>HTML</category>
+            <category>JavaScript</category>
+        </item>
+        <item>
+            <title>内网前端开发环境搭建</title>
+            <link>https://yuwb.dev/blog/nvm-nodejs-vscode-offline-setup/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/nvm-nodejs-vscode-offline-setup/</guid>
+            <pubDate>Thu, 03 Jul 2025 00:00:00 GMT</pubDate>
+            <description>使用 nvm 管理 Node.js 版本，在内网离线安装 VS Code 插件。</description>
+            <category>Node.js</category>
+            <category>VS Code</category>
+            <category>nvm</category>
+            <category>内网开发</category>
+        </item>
+        <item>
+            <title>前端开发者的 SEO 指南</title>
+            <link>https://yuwb.dev/blog/seo-guide/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/seo-guide/</guid>
+            <pubDate>Fri, 09 May 2025 00:00:00 GMT</pubDate>
+            <description>梳理页面结构、性能与结构化数据，整理前端项目的 SEO 优化方法。</description>
+            <category>SEO</category>
+            <category>性能优化</category>
+            <category>前端开发</category>
+        </item>
+        <item>
+            <title>用腾讯云搭建个人网站</title>
+            <link>https://yuwb.dev/blog/website-building/</link>
+            <guid isPermaLink="true">https://yuwb.dev/blog/website-building/</guid>
+            <pubDate>Wed, 29 May 2024 00:00:00 GMT</pubDate>
+            <description>从域名、服务器到备案，记录用腾讯云与宝塔面板搭建网站的过程。</description>
+            <category>腾讯云</category>
+            <category>服务器</category>
+            <category>WebSite</category>
+        </item>
+    </channel>
+</rss>

@@ -41,7 +41,6 @@ preview: designs/${id}/index.html
 colors: ['#F6F3EC', '#292D28', '#AD4A35']
 # source: https://github.com/your-name/your-project
 # commit: 原始提交的完整哈希
-screenshots: []
 ---
 
 ## 设计想法
@@ -54,13 +53,12 @@ screenshots: []
 
 ## 资源说明
 
-记录图片、字体的来源与使用许可。封面是示意图，固定截图请另存到 screenshots 目录。
+记录图片、字体的来源与使用许可，并用真实界面替换封面。
 `;
 
 await mkdir(dirname(designPath), { recursive: true });
 await mkdir(designPath);
 await mkdir(join(designPath, 'assets'));
-await mkdir(join(designPath, 'screenshots'));
 for (const name of ['index.html', 'styles.css', 'assets/cover.svg']) {
   const template = await readFile(join(root, 'templates/design', name), 'utf8');
   await writeFile(join(designPath, name), template.replaceAll('__DESIGN_ID__', id), { flag: 'wx' });

@@ -1,0 +1,22 @@
+{
+  "name": "语无边",
+  "short_name": "语无边",
+  "description": "语无边的个人技术博客 — 追求简洁设计与美好事物，以代码与文字安静造物。涵盖前端开发、TypeScript、Node.js、CesiumJS 三维可视化、SEO 优化与建站部署。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8f8f5",
+  "theme_color": "#f8f8f5",
+  "icons": [
+    {
+      "src": "./favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "scope": "./"
+}
