@@ -1,9 +1,9 @@
-/* ---------------- 数据 ---------------- */
+/* 色彩档案 · 数据、色彩度量与交互 */
 const GROUPS = [
   {
     id: 'A',
-    title: '第一组 · 陶溪川色系',
-    desc: '16 色 · 原始仅提供 HEX',
+    title: '陶溪川色系',
+    desc: '16 色 · 仅提供 HEX',
     items: [
       { cn: '陶溪川红', hex: '#823725' },
       { cn: '柔雾玫瑰', hex: '#955250' },
@@ -25,7 +25,7 @@ const GROUPS = [
   },
   {
     id: 'B',
-    title: '第二组 · 品牌专色',
+    title: '品牌专色',
     desc: '8 色 · 含 CMYK 与 PMS 标注',
     items: [
       { cn: '薄雾灰', en: 'Mist gray', hex: '#EDF1F3', cmyk: [5, 2, 2, 0], pms: 'PMS 656' },
@@ -58,31 +58,34 @@ const GROUPS = [
   },
 ];
 
-/* ---------------- 色彩工具 ---------------- */
-function hexToRgb(hex) {
+/* ---------------- 色彩度量 ---------------- */
+const hexToRgb = (hex) => {
   const h = hex.replace('#', '');
   return {
     r: parseInt(h.slice(0, 2), 16),
     g: parseInt(h.slice(2, 4), 16),
     b: parseInt(h.slice(4, 6), 16),
   };
-}
-function relLum({ r, g, b }) {
+};
+
+const relLum = ({ r, g, b }) => {
   const f = (v) => {
     v /= 255;
     return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   };
   return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
-}
-function contrast(a, b) {
-  const la = relLum(a),
-    lb = relLum(b);
+};
+
+const contrast = (a, b) => {
+  const la = relLum(a);
+  const lb = relLum(b);
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
-}
-function rgbToCmyk({ r, g, b }) {
-  const R = r / 255,
-    G = g / 255,
-    B = b / 255;
+};
+
+const rgbToCmyk = ({ r, g, b }) => {
+  const R = r / 255;
+  const G = g / 255;
+  const B = b / 255;
   const k = 1 - Math.max(R, G, B);
   if (k >= 0.9999) return [0, 0, 0, 100];
   return [
@@ -91,41 +94,44 @@ function rgbToCmyk({ r, g, b }) {
     Math.round(((1 - B - k) / (1 - k)) * 100),
     Math.round(k * 100),
   ];
-}
-function rgbToLab({ r, g, b }) {
+};
+
+const rgbToLab = ({ r, g, b }) => {
   const f = (v) => {
     v /= 255;
     return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   };
-  const R = f(r),
-    G = f(g),
-    B = f(b);
+  const R = f(r);
+  const G = f(g);
+  const B = f(b);
   let X = (R * 0.4124564 + G * 0.3575761 + B * 0.1804375) / 0.95047;
-  let Y = (R * 0.2126729 + G * 0.7151522 + B * 0.072175) / 1.0;
+  let Y = (R * 0.2126729 + G * 0.7151522 + B * 0.072175) / 1;
   let Z = (R * 0.0193339 + G * 0.119192 + B * 0.9503041) / 1.08883;
   const gm = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
   X = gm(X);
   Y = gm(Y);
   Z = gm(Z);
   return { L: 116 * Y - 16, a: 500 * (X - Y), b: 200 * (Y - Z) };
-}
-function deltaE(c1, c2) {
-  const A = rgbToLab(c1),
-    B = rgbToLab(c2);
+};
+
+const deltaE = (c1, c2) => {
+  const A = rgbToLab(c1);
+  const B = rgbToLab(c2);
   return Math.hypot(A.L - B.L, A.a - B.a, A.b - B.b);
-}
-function pickText(rgb) {
-  return contrast(rgb, { r: 255, g: 255, b: 255 }) >= contrast(rgb, { r: 17, g: 17, b: 17 })
+};
+
+const pickText = (rgb) =>
+  contrast(rgb, { r: 255, g: 255, b: 255 }) >= contrast(rgb, { r: 17, g: 17, b: 17 })
     ? '#FFFFFF'
-    : '#141414';
-}
-function hueKey(rgb) {
-  const r = rgb.r / 255,
-    g = rgb.g / 255,
-    b = rgb.b / 255;
-  const max = Math.max(r, g, b),
-    min = Math.min(r, g, b),
-    d = max - min;
+    : '#14120F';
+
+const hueKey = (rgb) => {
+  const r = rgb.r / 255;
+  const g = rgb.g / 255;
+  const b = rgb.b / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const d = max - min;
   if (d < 0.06) return -1;
   let h;
   if (max === r) h = ((g - b) / d) % 6;
@@ -133,22 +139,22 @@ function hueKey(rgb) {
   else h = (r - g) / d + 4;
   h *= 60;
   return h < 0 ? h + 360 : h;
-}
+};
+
 const fmt = (n) => Math.round(n * 10) / 10;
 const hexUp = (h) => '#' + h.replace('#', '').toUpperCase();
 
 /* ---------------- 预处理 ---------------- */
-GROUPS.forEach((g) =>
-  g.items.forEach((it) => {
-    it.key = g.id + '|' + it.cn;
-    it.gid = g.id;
-    it.rgb = hexToRgb(it.hex);
-    it.hexUp = hexUp(it.hex);
-    it.cmykAuto = rgbToCmyk(it.rgb);
-    it.lum = relLum(it.rgb);
-    it.hue = hueKey(it.rgb);
-  }),
-);
+for (const group of GROUPS) {
+  for (const item of group.items) {
+    item.key = group.id + '|' + item.cn;
+    item.rgb = hexToRgb(item.hex);
+    item.hexUp = hexUp(item.hex);
+    item.cmykAuto = rgbToCmyk(item.rgb);
+    item.lum = relLum(item.rgb);
+    item.hue = hueKey(item.rgb);
+  }
+}
 const ALL = GROUPS.flatMap((g) => g.items);
 
 /* ---------------- 状态 ---------------- */
@@ -156,20 +162,19 @@ let chosen = [];
 let sortMode = 'default';
 const metaOn = { rgb: true, cmyk: false, pms: false };
 
-/* ---------------- 顶部色带 ---------------- */
-document.getElementById('topStrip').innerHTML = ALL.map(
-  (it) => `<span style="background:${it.hexUp}"></span>`,
-).join('');
+const el = (id) => document.getElementById(id);
 
-/* ---------------- 渲染色卡 ---------------- */
-function sortByHue(items) {
-  return items.slice().sort((a, b) => {
+/* ---------------- 顶部色带 ---------------- */
+el('edge').innerHTML = ALL.map((it) => `<span style="background:${it.hexUp}"></span>`).join('');
+
+/* ---------------- 色卡 ---------------- */
+const sortByHue = (items) =>
+  items.slice().sort((a, b) => {
     if (a.hue < 0 && b.hue < 0) return a.lum - b.lum;
     if (a.hue < 0) return -1;
     if (b.hue < 0) return 1;
     return a.hue - b.hue;
   });
-}
 
 function sortItems(items) {
   const arr = items.slice();
@@ -179,7 +184,7 @@ function sortItems(items) {
   return arr;
 }
 
-function cardHTML(it) {
+function cardMarkup(it) {
   const on = chosen.some((c) => c.key === it.key);
   const txt = pickText(it.rgb);
   const lines = [];
@@ -188,75 +193,78 @@ function cardHTML(it) {
     const c = it.cmyk || it.cmykAuto;
     lines.push(`${it.cmyk ? '' : '≈ '}C${c[0]} M${c[1]} Y${c[2]} K${c[3]}`);
   }
-  if (metaOn.pms) lines.push(it.pms || '无 PMS 标注');
+  if (metaOn.pms) lines.push(it.pms ? it.pms : '无 PMS 标注');
 
   return `
-  <div class="card${on ? ' on' : ''}" data-key="${it.key}" tabindex="0" role="button"
-       aria-pressed="${on}" aria-label="${it.cn} ${it.hexUp}">
-    <div class="sw" style="background:${it.hexUp};color:${txt}">
-      <button class="copy" data-copy="${it.hexUp}" title="复制 ${it.hexUp}" aria-label="复制色值">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>
-        </svg>
-      </button>
-      <span class="hx mono">${it.hexUp}</span>
-      <span class="tick"></span>
-    </div>
-    <div class="cb">
-      <div class="nm">${it.cn}</div>
-      ${it.en ? `<div class="en">${it.en}</div>` : ''}
-      <div class="meta">${lines.join('<br>')}</div>
-    </div>
+  <div class="card${on ? ' on' : ''}" data-key="${it.key}">
+    <button type="button" class="card-hit" aria-pressed="${on}"
+            aria-label="${it.cn} ${it.hexUp}，加入或移出对比">
+      <span class="card-chip" style="background:${it.hexUp};color:${txt}">
+        <span class="hx mono">${it.hexUp}</span>
+        <span class="card-mark" aria-hidden="true"></span>
+      </span>
+      <span class="card-body">
+        <span class="card-name">${it.cn}</span>
+        ${it.en ? `<span class="card-en">${it.en}</span>` : ''}
+        <span class="card-meta mono">${lines.join('<br>')}</span>
+      </span>
+    </button>
+    <button type="button" class="card-copy" data-copy="${it.hexUp}"
+            title="复制 ${it.hexUp}" aria-label="复制色值 ${it.hexUp}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+      </svg>
+    </button>
   </div>`;
 }
 
 function renderGroups() {
-  GROUPS.forEach((g) => {
-    const host = document.getElementById('group' + g.id);
-    const items = sortItems(g.items);
-    host.innerHTML = `
-      <div class="sec-head" style="margin-bottom:14px;">
-        <h2 style="font-size:14px;">${g.title}</h2>
-        <span class="desc">${g.desc}</span>
-      </div>
-      <div class="grid">${items.map(cardHTML).join('')}</div>`;
-  });
+  for (const group of GROUPS) {
+    const host = el('group' + group.id);
+    host.innerHTML = sortItems(group.items).map(cardMarkup).join('');
+  }
 }
 
 /* ---------------- 色相带 ---------------- */
 function renderStrip() {
-  const items = sortByHue(ALL);
-  document.getElementById('strip').innerHTML = items
+  el('strip').innerHTML = sortByHue(ALL)
     .map((it) => {
       const on = chosen.some((c) => c.key === it.key);
-      return `<div class="strip-seg${on ? ' on' : ''}" data-key="${it.key}"
-      style="background:${it.hexUp}" title="${it.cn} ${it.hexUp}"></div>`;
+      return `<button type="button" class="strip-seg" data-key="${it.key}"
+        aria-pressed="${on}" title="${it.cn} ${it.hexUp}"
+        aria-label="${it.cn} ${it.hexUp}" style="background:${it.hexUp}"></button>`;
     })
     .join('');
 }
 
-/* ---------------- 底部对比台 ---------------- */
-function renderDock() {
-  const chips = document.getElementById('chips');
-  if (chosen.length === 0) {
-    chips.innerHTML = '<span class="hint">点击色块加入对比（最多 4 个）</span>';
-  } else {
-    chips.innerHTML = chosen
-      .map(
-        (it) => `
-      <button class="chip" data-remove="${it.key}" title="移出对比">
-        <span class="dot" style="background:${it.hexUp}"></span>
+/* ---------------- 对比栏 ---------------- */
+function renderTray() {
+  const chips = el('chips');
+  chips.innerHTML =
+    chosen.length === 0
+      ? '<span class="tray-hint">点击色块加入对比（最多 4 个）</span>'
+      : chosen
+          .map(
+            (it) => `
+      <button type="button" class="chip" data-remove="${it.key}" title="移出对比">
+        <span class="chip-dot" style="background:${it.hexUp}"></span>
         <span>${it.cn}</span>
-        <span class="x">×</span>
+        <span class="chip-x" aria-hidden="true">×</span>
       </button>`,
-      )
-      .join('');
-  }
-  const btn = document.getElementById('cmpBtn');
-  btn.disabled = chosen.length < 2;
-  btn.textContent = chosen.length < 2 ? '选择至少 2 色' : `对比这 ${chosen.length} 色`;
+          )
+          .join('');
 
-  if (!document.getElementById('panel').classList.contains('open')) return;
+  const btn = el('cmpBtn');
+  const open = el('panel').classList.contains('open');
+  btn.disabled = chosen.length < 2;
+  if (open) {
+    btn.textContent = chosen.length < 2 ? '选择至少 2 色' : '收起对比';
+  } else {
+    btn.textContent = chosen.length < 2 ? '选择至少 2 色' : `对比这 ${chosen.length} 色`;
+  }
+
+  if (!open) return;
   if (chosen.length < 2) {
     closePanel();
     return;
@@ -264,32 +272,37 @@ function renderDock() {
   renderPanel();
 }
 
-function badgeFor(ratio) {
-  if (ratio >= 7) return `<span class="badge ok">AAA</span>`;
-  if (ratio >= 4.5) return `<span class="badge ok">AA</span>`;
-  if (ratio >= 3) return `<span class="badge warn">仅大字号</span>`;
-  return `<span class="badge bad">不达标</span>`;
+/* ---------------- 对比面板 ---------------- */
+function gradeOf(ratio) {
+  if (ratio >= 7) return { label: 'AAA', cls: 'ok' };
+  if (ratio >= 4.5) return { label: 'AA', cls: 'ok' };
+  if (ratio >= 3) return { label: '大字号', cls: 'warn' };
+  return { label: '不可用', cls: 'bad' };
 }
 
 function renderPanel() {
-  const white = { r: 255, g: 255, b: 255 },
-    black = { r: 0, g: 0, b: 0 };
+  const white = { r: 255, g: 255, b: 255 };
+  const black = { r: 0, g: 0, b: 0 };
 
   const cards = chosen
     .map((it) => {
       const txt = pickText(it.rgb);
-      const cw = contrast(it.rgb, white),
-        cb = contrast(it.rgb, black);
-      const best = Math.max(cw, cb);
+      const cw = contrast(it.rgb, white);
+      const cb = contrast(it.rgb, black);
+      const useWhite = cw >= cb;
+      const g = gradeOf(useWhite ? cw : cb);
       const cmyk = it.cmyk || it.cmykAuto;
       return `
     <div class="cmp-card">
       <div class="cmp-sw" style="background:${it.hexUp};color:${txt}">
-        <div class="sample">Aa 汉字</div>
-        <div class="h mono">${it.hexUp}</div>
+        <div class="cmp-sample">Aa 汉字</div>
+        <div class="cmp-hex">${it.hexUp}</div>
       </div>
       <div class="cmp-info">
-        <div class="cmp-name">${it.cn} ${badgeFor(best)}</div>
+        <div class="cmp-name">
+          ${it.cn}
+          <span class="badge ${g.cls}">${useWhite ? '白字' : '黑字'} ${g.label}</span>
+        </div>
         <div class="row"><span>RGB</span><b>${it.rgb.r} ${it.rgb.g} ${it.rgb.b}</b></div>
         <div class="row"><span>CMYK${it.cmyk ? '' : ' ≈'}</span><b>${cmyk.join(' ')}</b></div>
         <div class="row"><span>PMS</span><b>${it.pms ? it.pms.replace('PMS ', '') : '—'}</b></div>
@@ -308,7 +321,7 @@ function renderPanel() {
     .map((a, i) => {
       const tds = chosen
         .map((b, j) => {
-          if (i === j) return `<td class="self">—</td>`;
+          if (i === j) return '<td class="self">—</td>';
           const cr = contrast(a.rgb, b.rgb);
           const de = deltaE(a.rgb, b.rgb);
           const cls = cr >= 4.5 ? 'c-ok' : cr >= 3 ? 'c-warn' : 'c-bad';
@@ -319,26 +332,30 @@ function renderPanel() {
     })
     .join('');
 
-  document.getElementById('panelInner').innerHTML = `
+  el('panelInner').innerHTML = `
     <div class="panel-head">
       <b>对比结果 · ${chosen.length} 色</b>
       <span>对比度按 WCAG 2.1 相对亮度计算 · ΔE 为 CIE76 色差</span>
     </div>
     <div class="cmp-grid">${cards}</div>
-    <div class="mx-title"><b>两两对比矩阵</b><span>主值 = 对比度（越大越易分辨）· 次值 = 色差 ΔE（越大差异越明显）</span></div>
+    <div class="mx-title">
+      <b>两两对比矩阵</b>
+      <span>主值为对比度，次值为色差 ΔE</span>
+    </div>
     <div class="mx-wrap">
       <table class="mx"><thead>${head}</thead><tbody>${rows}</tbody></table>
     </div>`;
 }
 
 function openPanel() {
-  document.getElementById('panel').classList.add('open');
+  el('panel').classList.add('open');
   renderPanel();
-  document.getElementById('cmpBtn').textContent = '收起对比';
+  el('cmpBtn').textContent = '收起对比';
 }
+
 function closePanel() {
-  document.getElementById('panel').classList.remove('open');
-  const btn = document.getElementById('cmpBtn');
+  el('panel').classList.remove('open');
+  const btn = el('cmpBtn');
   btn.disabled = chosen.length < 2;
   btn.textContent = chosen.length < 2 ? '选择至少 2 色' : `对比这 ${chosen.length} 色`;
 }
@@ -360,88 +377,84 @@ function toggle(key) {
 }
 
 function sync() {
-  document.querySelectorAll('.card').forEach((el) => {
-    const on = chosen.some((c) => c.key === el.dataset.key);
-    el.classList.toggle('on', on);
-    el.setAttribute('aria-pressed', on);
+  document.querySelectorAll('.card').forEach((node) => {
+    const on = chosen.some((c) => c.key === node.dataset.key);
+    node.classList.toggle('on', on);
+    const hit = node.querySelector('.card-hit');
+    if (hit) hit.setAttribute('aria-pressed', String(on));
   });
-  document.querySelectorAll('.strip-seg').forEach((el) => {
-    el.classList.toggle(
-      'on',
-      chosen.some((c) => c.key === el.dataset.key),
-    );
+  document.querySelectorAll('.strip-seg').forEach((node) => {
+    node.setAttribute('aria-pressed', String(chosen.some((c) => c.key === node.dataset.key)));
   });
-  renderDock();
+  renderTray();
 }
 
-document.addEventListener('click', (e) => {
-  const copyBtn = e.target.closest('[data-copy]');
+document.addEventListener('click', (event) => {
+  const copyBtn = event.target.closest('[data-copy]');
   if (copyBtn) {
-    e.stopPropagation();
+    event.stopPropagation();
     copyText(copyBtn.dataset.copy);
     return;
   }
-  const card = e.target.closest('.card');
-  if (card) {
-    toggle(card.dataset.key);
+  const hit = event.target.closest('.card-hit');
+  if (hit) {
+    toggle(hit.closest('.card').dataset.key);
     return;
   }
-  const seg = e.target.closest('.strip-seg');
+  const seg = event.target.closest('.strip-seg');
   if (seg) {
     toggle(seg.dataset.key);
     return;
   }
-  const rm = e.target.closest('[data-remove]');
-  if (rm) {
-    toggle(rm.dataset.remove);
-    return;
-  }
+  const remove = event.target.closest('[data-remove]');
+  if (remove) toggle(remove.dataset.remove);
 });
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
     closePanel();
     return;
   }
-  if ((e.key === 'Enter' || e.key === ' ') && document.activeElement.classList.contains('card')) {
-    e.preventDefault();
-    toggle(document.activeElement.dataset.key);
-  }
+  // Enter / Space 由原生 button 触发 click，无需额外处理
 });
 
-document.getElementById('sortSeg').addEventListener('click', (e) => {
-  const b = e.target.closest('button[data-sort]');
-  if (!b) return;
-  sortMode = b.dataset.sort;
-  document.querySelectorAll('#sortSeg button').forEach((x) => x.classList.toggle('on', x === b));
+el('sortSeg').addEventListener('click', (event) => {
+  const button = event.target.closest('button[data-sort]');
+  if (!button) return;
+  sortMode = button.dataset.sort;
+  document.querySelectorAll('#sortSeg button').forEach((node) => {
+    const active = node === button;
+    node.classList.toggle('on', active);
+    node.setAttribute('aria-pressed', String(active));
+  });
   renderGroups();
   renderStrip();
   sync();
 });
 
-document.getElementById('metaSeg').addEventListener('click', (e) => {
-  const b = e.target.closest('button[data-meta]');
-  if (!b) return;
-  const k = b.dataset.meta;
-  metaOn[k] = !metaOn[k];
-  b.classList.toggle('on', metaOn[k]);
+el('metaSeg').addEventListener('click', (event) => {
+  const button = event.target.closest('button[data-meta]');
+  if (!button) return;
+  const key = button.dataset.meta;
+  metaOn[key] = !metaOn[key];
+  button.classList.toggle('on', metaOn[key]);
+  button.setAttribute('aria-pressed', String(metaOn[key]));
   renderGroups();
   sync();
 });
 
-document.getElementById('clearBtn').addEventListener('click', () => {
+el('clearBtn').addEventListener('click', () => {
   chosen = [];
   closePanel();
   sync();
 });
 
-document.getElementById('cmpBtn').addEventListener('click', () => {
-  const panel = document.getElementById('panel');
-  if (panel.classList.contains('open')) closePanel();
+el('cmpBtn').addEventListener('click', () => {
+  if (el('panel').classList.contains('open')) closePanel();
   else openPanel();
 });
 
-/* ---------------- 复制 / 提示 ---------------- */
+/* ---------------- 复制与提示 ---------------- */
 function copyText(text) {
   const done = () => toast('已复制 ' + text);
   if (navigator.clipboard && window.isSecureContext) {
@@ -453,30 +466,32 @@ function copyText(text) {
     fallbackCopy(text, done);
   }
 }
-function fallbackCopy(text, cb) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.cssText = 'position:fixed;top:-9999px;opacity:0;';
-  document.body.appendChild(ta);
-  ta.select();
+
+function fallbackCopy(text, done) {
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.style.cssText = 'position:fixed;top:-9999px;opacity:0;';
+  document.body.appendChild(area);
+  area.select();
   try {
     document.execCommand('copy');
-    cb();
-  } catch (err) {
+    done();
+  } catch (error) {
     toast('复制失败，请手动选择');
   }
-  document.body.removeChild(ta);
+  document.body.removeChild(area);
 }
+
 let toastTimer = null;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+function toast(message) {
+  const node = el('toast');
+  node.textContent = message;
+  node.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 1500);
+  toastTimer = setTimeout(() => node.classList.remove('show'), 1500);
 }
 
 /* ---------------- 初始化 ---------------- */
 renderGroups();
 renderStrip();
-renderDock();
+renderTray();

@@ -5,7 +5,7 @@ category: 工具
 tags: [浅色, 色卡, 数据可视化]
 date: '2026-11-17'
 version: v1
-cover: designs/color-compare-v1/assets/cover.png
+cover: designs/color-compare-v1/assets/cover.webp
 preview: designs/color-compare-v1/index.html
 colors: ['#F6F4F0', '#141414', '#823725']
 ---
@@ -19,11 +19,12 @@ colors: ['#F6F4F0', '#141414', '#823725']
 ## 交互与还原范围
 
 - 点击色卡或色相带把颜色加入底部对比栏，最多 4 个同屏对比。
-- 「对比」展开面板，给出每色的 RGB、CMYK、PMS、黑白字对比度，以及两两之间的对比度矩阵与 ΔE 色差。
+- 「对比」展开底部面板，给出每色的 RGB、CMYK、PMS、黑白字对比度（并标注该色实际更适合配白字还是黑字），以及两两之间的对比度矩阵与 ΔE 色差。
 - 色卡支持按默认、色相、明度、名称排序；数值显示可在 RGB、CMYK、PMS 之间切换。
-- 悬停色块左上角可复制 HEX，键盘 Tab 选中后回车或空格同样可加入对比，Esc 收起面板。
+- 悬停或聚焦色卡右上角可复制 HEX；触屏设备上复制按钮常显，不会因没有悬停而点不到。
+- 色卡本身是原生按钮，Tab 可逐张聚焦，回车或空格加入对比，Esc 收起面板。
 - 已按 WCAG 2.1 相对亮度公式与 sRGB → Lab 换算实现，ΔE 取 CIE76。
 
 ## 资源说明
 
-单文件工具，无外部依赖与图片资源，界面字体走系统字族（PingFang SC / Microsoft YaHei / 宋体），不使用展示站的圆体。第一组仅提供 HEX，CMYK 为无色彩管理近似换算（界面标 ≈），不能直接交付印刷；第二组的 CMYK 与 PMS 为原始标注值。封面为本页实际截屏。
+纯静态页（index.html + styles.css + script.js），无外部依赖与图片资源。标题用系统衬线字族做「印刷色标本册」的版式，正文用无衬线，不使用展示站的圆体。第一组仅提供 HEX，CMYK 为无色彩管理近似换算（界面标 ≈），不能直接交付印刷；第二组的 CMYK 与 PMS 为原始标注值。封面为本页实际截屏。
