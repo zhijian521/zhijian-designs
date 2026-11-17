@@ -4,37 +4,47 @@ import { withBase } from '../lib/paths';
 import { readPublicImageSize } from '../lib/imageSize';
 interface Props {
   design: CollectionEntry<'designs'>;
+  /** 卷次，由列表页按页码与序号算出，如「壹」「贰」。 */
+  volume?: string;
 }
-const { design } = Astro.props;
+const { design, volume = '壹' } = Astro.props;
 const { data, id } = design;
 // 真实尺寸只用于声明 width/height 防止图片加载前布局跳动；
-// 展示比例统一由 CSS 的 3:2 决定，避免不同来源的封面把卡片撑成不同高度。
+// 展示比例统一由 CSS 的 3:2 决定，避免不同来源的封面把图版撑成不同高度。
 const cover = readPublicImageSize(data.cover);
+const href = withBase('archive/' + id + '/');
+const version = data.version.replace(/^v/, '');
 ---
 
-<article class="design-card">
-  <a class="card-cover" href={withBase(`archive/${id}/`)} aria-label={`查看${data.title}`}>
+<li class="entry">
+  <span class="vol" aria-hidden="true">
+    卷{volume}
+  </span>
+  <p class="kicker">
+    {data.category} · 版本{version}
+  </p>
+  <h2>
+    <a href={href}>{data.title}</a>
+  </h2>
+  <p class="desc">{data.description}</p>
+  <a class="plate" href={href} aria-label={'查看' + data.title}>
     <img
       src={withBase(data.cover)}
-      alt={`${data.title}界面封面`}
+      alt={data.title + '界面封面'}
       width={cover.width}
       height={cover.height}
       loading="lazy"
     />
   </a>
-  <div class="card-meta">
+  <div class="caption">
     <span>
-      {data.category} · {data.version}
+      图 {volume} ／ {data.title}
     </span>
     <time datetime={data.date}>{data.date.replaceAll('-', '.')}</time>
   </div>
-  <h2>
-    <a href={withBase(`archive/${id}/`)}>{data.title}</a>
-  </h2>
-  <p>{data.description}</p>
-  <div class="tags">
+  <p class="tags">
     {data.tags.map((tag) => (
       <span>{tag}</span>
     ))}
-  </div>
-</article>
+  </p>
+</li>

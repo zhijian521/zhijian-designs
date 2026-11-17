@@ -4,19 +4,24 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import PreviewFrame from '../../components/PreviewFrame.astro';
 import BackLink from '../../components/BackLink.astro';
 import { absoluteUrl, siteName, withBase } from '../../lib/site';
+import { volumeOf } from '../../lib/designs';
 export async function getStaticPaths() {
-  return (await getCollection('designs')).map((design) => ({
+  const designs = (await getCollection('designs')).sort(
+    (a, b) => b.data.date.localeCompare(a.data.date) || a.id.localeCompare(b.id),
+  );
+  return designs.map((design, index) => ({
     params: { id: design.id },
-    props: { design },
+    props: { design, volume: volumeOf(index), total: designs.length },
   }));
 }
-const { design } = Astro.props;
+const { design, volume, total } = Astro.props;
 const { data } = design;
 const { Content } = await render(design);
+const version = data.version.replace(/^v/, '');
 ---
 
 <SiteLayout
-  title={`${data.title} — ${siteName}`}
+  title={data.title + ' — ' + siteName}
   description={data.description}
   image={data.cover}
   structuredData={{
@@ -26,41 +31,48 @@ const { Content } = await render(design);
     datePublished: data.date,
     genre: data.category,
     keywords: data.tags.join(', '),
-    url: absoluteUrl(`archive/${design.id}/`),
+    url: absoluteUrl('archive/' + design.id + '/'),
     image: absoluteUrl(data.cover),
     ...(data.source && { sameAs: [data.source] }),
   }}
 >
   <div class="shell detail-page">
+    <div class="runhead">
+      <span>知 简 · 设 计 集</span>
+      <span>
+        卷 {volume} ／ 共 {total} 册
+      </span>
+    </div>
     <BackLink />
     <header class="detail-header">
-      <h1>{data.title}</h1>
-      <p>{data.description}</p>
-      <div class="tags">
-        {data.tags.map((tag) => (
-          <span>{tag}</span>
-        ))}
+      <span class="seal" aria-hidden="true">
+        知简
+      </span>
+      <div>
+        <h1>{data.title}</h1>
+        <p class="lede">{data.description}</p>
       </div>
     </header>
+    <div class="rule"></div>
     <section class="design-overview" aria-label="作品信息">
       <dl class="design-facts">
         <div>
-          <dt>类型</dt>
+          <dt>类 目</dt>
           <dd>{data.category}</dd>
         </div>
         <div>
-          <dt>日期</dt>
-          <dd>
-            <time datetime={data.date}>{data.date}</time>
-          </dd>
+          <dt>版 本</dt>
+          <dd>版本{version}</dd>
         </div>
         <div>
-          <dt>版本</dt>
-          <dd>{data.version}</dd>
+          <dt>入 册</dt>
+          <dd>
+            <time datetime={data.date}>{data.date.replaceAll('-', '.')}</time>
+          </dd>
         </div>
       </dl>
       <div class="design-palette">
-        <h2>主题配色</h2>
+        <h2>纸 色</h2>
         <ul class="color-cards">
           {data.colors.map((color) => (
             <li>
@@ -74,14 +86,20 @@ const { Content } = await render(design);
     <PreviewFrame src={withBase(data.preview)} title={data.title} />
     <article class="prose detail-notes">
       <Content />
-      {data.source && (
-        <p>
-          <a href={data.source} target="_blank" rel="noopener noreferrer">
-            原始仓库 ↗
-          </a>
-        </p>
-      )}
-      {data.commit && <p class="commit">提交：{data.commit}</p>}
     </article>
+    <div class="sign">
+      <span>原文案、配色与字体取自作品本身</span>
+      {data.source ? (
+        <a href={data.source} target="_blank" rel="noopener noreferrer">
+          原始仓库 ↗
+        </a>
+      ) : (
+        <span>纯静态作品，无外部依赖</span>
+      )}
+    </div>
+    {data.commit && <p class="commit">提交：{data.commit}</p>}
+    <div class="colophon">
+      卷 {volume} ／ 第 {total} 册 终
+    </div>
   </div>
 </SiteLayout>

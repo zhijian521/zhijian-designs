@@ -4,11 +4,17 @@ import { withBase } from '../lib/paths';
 import { siteName } from '../lib/site';
 ---
 
-<SiteLayout title={`页面未找到 — ${siteName}`} path={withBase()} noindex>
+<SiteLayout title={'页面未找到 — ' + siteName} path={withBase()} noindex>
   <section class="shell not-found">
-    <h1>页面未找到</h1>
+    <div class="runhead">
+      <span>知 简 · 设 计 集</span>
+      <span>卷 外 ／ 空 页</span>
+    </div>
+    <div class="rule"></div>
+    <h1>此 页 空 白</h1>
+    <p>这一册不在卷中，或许已被移出书架。</p>
     <a class="text-link" href={withBase()}>
-      返回设计收藏 ↗
+      返回目录 ↗
     </a>
   </section>
 </SiteLayout>

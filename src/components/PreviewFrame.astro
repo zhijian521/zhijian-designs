@@ -9,7 +9,7 @@ const { src, title } = Astro.props;
 
 <section class="preview-section" aria-labelledby="preview-title">
   <div class="preview-heading">
-    <h2 id="preview-title">预览</h2>
+    <h2 id="preview-title">图 版</h2>
     <a class="text-link" href={src} target="_blank" rel="noopener noreferrer">
       独立打开 ↗
     </a>
@@ -33,8 +33,8 @@ const { src, title } = Astro.props;
       <div class="preview-actions" role="group" aria-label="预览显示">
         <button type="button" data-zoom="out" aria-label="缩小预览" title="缩小预览">
           <svg
-            width="16"
-            height="16"
+            width="14"
+            height="14"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -46,13 +46,14 @@ const { src, title } = Astro.props;
         </button>
         <button type="button" data-zoom="reset" aria-label="重置缩放为 100%" title="重置缩放">
           <span id="preview-zoom" aria-live="polite">
-            100%
+            {' '}
+            100%{' '}
           </span>
         </button>
         <button type="button" data-zoom="in" aria-label="放大预览" title="放大预览">
           <svg
-            width="16"
-            height="16"
+            width="14"
+            height="14"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -70,8 +71,8 @@ const { src, title } = Astro.props;
           aria-pressed="false"
         >
           <svg
-            width="16"
-            height="16"
+            width="14"
+            height="14"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -89,7 +90,7 @@ const { src, title } = Astro.props;
         <iframe
           id="design-preview"
           src={src}
-          title={`${title}的独立界面预览`}
+          title={title + '的独立界面预览'}
           loading="lazy"
           data-scrollbars={withBase('styles/scrollbars.css')}
         ></iframe>
@@ -97,6 +98,7 @@ const { src, title } = Astro.props;
     </div>
   </div>
 </section>
+
 <script>
   const frame = document.querySelector<HTMLIFrameElement>('#design-preview')!;
   const shell = document.querySelector<HTMLElement>('.preview-shell')!;
