@@ -668,7 +668,9 @@ code {
   position: sticky;
   top: 0;
   z-index: 20;
-  margin-top: 28px;
+  /* 与控制坞上下内容同宽：整条不铺满视口，只跟正文栏走。 */
+  width: min(1120px, calc(100% - 48px));
+  margin: 28px auto 0;
   padding-block: 10px;
   border-block: var(--w-hair) solid var(--rule-2);
   background: color-mix(in srgb, var(--paper) 92%, transparent);
@@ -1401,6 +1403,7 @@ main {
   }
   .control-dock {
     position: static;
+    width: calc(100% - 28px);
     margin-top: 18px;
   }
   .dock-inner {
