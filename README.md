@@ -46,7 +46,7 @@ colors: ['#F6F3EC', '#292D28']
 ---
 ```
 
-当前收录三份：语无边 · 个人博客（`simple-blog-v1`，来自 [simple-blog](https://github.com/zhijian521/simple-blog) 的固定提交）、色彩对比工作台（`color-compare-v1`）与梦幻助手 · 设计语言（`mh-toolbox-v1`，来自 [mh-toolbox-rs](https://github.com/zhijian521/mh-toolbox-rs) 的固定提交）。
+当前收录四份：语无边 · 个人博客（`simple-blog-v1`，来自 [simple-blog](https://github.com/zhijian521/simple-blog) 的固定提交）、色彩对比工作台（`color-compare-v1`）、梦幻助手 · 设计语言（`mh-toolbox-v1`，来自 [mh-toolbox-rs](https://github.com/zhijian521/mh-toolbox-rs) 的固定提交）与知简 · 博客设计语言（`zhijian-home-v1`，来自 [zhijian-home](https://github.com/zhijian521/zhijian-home) 的固定提交）。
 
 ## 结构
 

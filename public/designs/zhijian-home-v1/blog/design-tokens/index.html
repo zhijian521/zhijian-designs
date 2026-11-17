@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>用一份设计令牌统一全站的颜色 · Zhi Jian 博客</title>
+    <meta
+      name="description"
+      content="朱砂、宣纸、墨色三层语义变量：为什么颜色不该写在组件里，以及一套令牌怎么同时喂饱明色与暗色。"
+    />
+    <link rel="icon" href="../../assets/logo.webp" type="image/webp" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <script src="../../script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到正文</a>
+
+    <header class="site-header" data-header>
+      <div class="site-header__inner">
+        <a class="brand" href="../../index.html">
+          <img class="brand__logo" src="../../assets/logo.webp" alt="" width="32" height="32" />
+          <span class="brand__text">Zhijian</span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+          <a class="site-nav__link" href="../../index.html">首页</a>
+          <a class="site-nav__link is-current" href="../index.html" aria-current="page">
+            文章
+            <span class="site-nav__underline" aria-hidden="true"></span>
+          </a>
+        </nav>
+        <nav class="mobile-nav" aria-label="快捷导航">
+          <a class="icon-button" href="../../index.html" aria-label="首页">
+            <svg class="icon icon--nav" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <path d="M9 22V12h6v10" />
+            </svg>
+          </a>
+          <a
+            class="icon-button is-current"
+            href="../index.html"
+            aria-label="文章"
+            aria-current="page"
+          >
+            <svg class="icon icon--nav" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M8 6h13M8 12h13M8 18h13" />
+              <path d="M3 6h.01M3 12h.01M3 18h.01" />
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="post-page" id="main">
+      <div class="post-container">
+        <article class="post-article">
+          <nav class="breadcrumb" aria-label="面包屑导航">
+            <ol class="breadcrumb__list">
+              <li class="breadcrumb__item">
+                <a class="breadcrumb__link" href="../../index.html">首页</a>
+              </li>
+              <li class="breadcrumb__separator" aria-hidden="true">/</li>
+              <li class="breadcrumb__item">
+                <a class="breadcrumb__link" href="../index.html">文章</a>
+              </li>
+              <li class="breadcrumb__separator" aria-hidden="true">/</li>
+              <li class="breadcrumb__item breadcrumb__current" aria-current="page">
+                用一份设计令牌统一全站的颜色
+              </li>
+            </ol>
+          </nav>
+
+          <header class="post-header">
+            <h1 class="post-header__title">用一份设计令牌统一全站的颜色</h1>
+            <p class="post-header__summary">
+              颜色不写死在任何组件里。朱砂、宣纸、墨色三层语义变量往下铺，换主题时整页跟着换。
+            </p>
+            <div class="post-header__meta">
+              <span class="tag tag--primary">前端</span>
+              <span class="tag">CSS</span>
+              <span class="tag">设计令牌</span>
+              <time datetime="2026-06-18">发布于 2026 年 6 月 18 日</time>
+              <time datetime="2026-07-02">更新于 2026 年 7 月 2 日</time>
+            </div>
+          </header>
+
+          <figure class="post-cover">
+            <img
+              src="../../assets/posts/p-caching.webp"
+              alt="墨色、宣纸、朱砂与青苔四组色卡"
+              width="1200"
+              height="637"
+            />
+          </figure>
+
+          <div class="markdown-body">
+            <p>
+              这套站点的底面是三样东西：朱砂、宣纸和墨。听上去像一句口味描述，落到代码里其实只是一组十六进制值。麻烦的地方从来不是选色，而是<strong>让同一个「朱砂」在按钮、下划线、当前项里都指向同一处</strong>，并且换到暗色时不至于把整页推翻重来。
+            </p>
+
+            <h2>三层，不要一层</h2>
+            <p>
+              最省事的写法是建一层变量，把
+              <code>--red: #a3262a</code>
+              这样的名字铺出去。它第一天就撑不住：暗色模式下这块朱砂要变浅，但「变浅的朱砂」和「正常的朱砂」是两个不同的决定，一个名字装不下两个决定。
+            </p>
+            <p>所以这里分成三层，从下往上：</p>
+            <ul>
+              <li>
+                <b>调色板</b>：纯客观的色值，带色阶编号，比如
+                <code>--color-cinnabar-600</code>。它只回答「这个颜料是什么颜色」。
+              </li>
+              <li>
+                <b>语义</b>：回答「这块地方是干什么的」，比如
+                <code>--action-primary</code>。它不关心具体是哪个颜料。
+              </li>
+              <li><b>组件</b>：只消费语义层，不许直接翻调色板。</li>
+            </ul>
+            <blockquote>
+              <p>
+                判断标准很简单：把暗色模式整套删掉，语义层不应该有任何一行需要改。如果改了，说明语义层里混进了颜色决策。
+              </p>
+            </blockquote>
+
+            <h2>调色板只写一次</h2>
+            <p>
+              朱砂取了四档，宣纸取了七档，墨色取了四档。档位数不是凑整，是按实际用到的地儿定的：纸要区分页面、抬起、凹下、强调四个层次，所以纸是四档起步。
+            </p>
+
+            <div class="code-block" data-code-block>
+              <button class="code-block__copy" type="button" data-copy-code aria-label="复制代码">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect x="9" y="9" width="12" height="12" rx="0" />
+                  <path d="M5 15V3h12" />
+                </svg>
+              </button>
+              <pre class="code-block__area"><code>:root {
+  /*== 朱砂 ==*/
+  --color-cinnabar-300: #f58f87;
+  --color-cinnabar-400: #de5d5b;
+  --color-cinnabar-600: #a3262a;
+  --color-cinnabar-700: #872126;
+
+  /*== 宣纸 ==*/
+  --color-paper-0: #fffefa;
+  --color-paper-50: #fdfbf6;
+  --color-paper-100: #f9f4ea;
+  --color-paper-150: #f5ede1;
+  --color-paper-300: #dfcfbb;
+
+  /*== 墨色 ==*/
+  --color-ink-500: #73685d;
+  --color-ink-900: #211d18;
+  --color-ink-950: #17130f;
+}</code></pre>
+            </div>
+
+            <h2>语义层承担明暗</h2>
+            <p>
+              明暗切换只发生在语义层。媒体查询里重新赋值的是同一批变量名，组件的样式表一个字都不用动：
+            </p>
+
+            <div class="code-block" data-code-block>
+              <button class="code-block__copy" type="button" data-copy-code aria-label="复制代码">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect x="9" y="9" width="12" height="12" rx="0" />
+                  <path d="M5 15V3h12" />
+                </svg>
+              </button>
+              <pre class="code-block__area"><code>:root {
+  --surface-page: var(--color-paper-50);
+  --text-primary: var(--color-ink-900);
+  --action-primary: var(--color-cinnabar-600);
+  --image-brightness: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-page: var(--color-ink-950);
+    --text-primary: var(--color-paper-50);
+    --action-primary: var(--color-cinnabar-400);
+    --image-brightness: 0.7;
+  }
+}</code></pre>
+            </div>
+
+            <p>
+              注意最后那行 <code>--image-brightness</code>：水墨背景图在暗色下直接压到 0.7
+              倍亮度，而不是另做一张图。一张图配一个变量，比准备两套图省事得多。
+            </p>
+
+            <h3>为什么朱砂在暗色下要变浅</h3>
+            <p>
+              <code>#a3262a</code> 压在纸色上对比度足够，压在墨色上就糊成一团。所以暗色档换到
+              <code>#de5d5b</code
+              >，同时把「朱底上的字」从纸色换成更深的墨——同一块朱红，两种底色下的文字颜色是相反的。
+            </p>
+
+            <h3>叠色用 color-mix，不新增变量</h3>
+            <p>
+              半透明的朱砂底、六成的分隔线、八成的浮层，都不单独定义新变量，而是在用的时候混出来。这样调色板不会随着页面增长而膨胀。
+            </p>
+
+            <div class="code-block" data-code-block>
+              <button class="code-block__copy" type="button" data-copy-code aria-label="复制代码">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect x="9" y="9" width="12" height="12" rx="0" />
+                  <path d="M5 15V3h12" />
+                </svg>
+              </button>
+              <pre class="code-block__area"><code>.tag--primary {
+  background: color-mix(in srgb, var(--action-primary) 10%, transparent);
+  color: var(--action-primary);
+}
+
+.status {
+  border-color: color-mix(in srgb, var(--border-default) 60%, transparent);
+}</code></pre>
+            </div>
+
+            <h2>三条落地约定</h2>
+            <ol>
+              <li>组件样式表里出现十六进制值，一律算错；要新颜色就先回语义层加。</li>
+              <li>
+                语义变量名里不出现颜色词，只出现用途词（<code>surface</code>、<code>action</code>、<code>border</code>）。
+              </li>
+              <li>每加一个语义变量，同时写下暗色值；缺暗色值比写错色值更麻烦。</li>
+            </ol>
+
+            <h2>实测量化</h2>
+            <p>
+              这套令牌目前覆盖四种表面、两套明暗，一共 24
+              个语义变量。把变量换成人眼可读的对照，大概是这样：
+            </p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>语义变量</th>
+                    <th>明色取色</th>
+                    <th>暗色取色</th>
+                    <th>用在哪</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>--surface-page</code></td>
+                    <td>纸 50</td>
+                    <td>墨 950</td>
+                    <td>整页底</td>
+                  </tr>
+                  <tr>
+                    <td><code>--surface-muted</code></td>
+                    <td>纸 100</td>
+                    <td>墨 900</td>
+                    <td>名片底、引用块</td>
+                  </tr>
+                  <tr>
+                    <td><code>--action-primary</code></td>
+                    <td>朱砂 600</td>
+                    <td>朱砂 400</td>
+                    <td>当前项、链接、主按钮</td>
+                  </tr>
+                  <tr>
+                    <td><code>--border-default</code></td>
+                    <td>纸边</td>
+                    <td>墨边</td>
+                    <td>分隔线、卡框</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p>
+              最后一条经验：<b>令牌不是设计系统</b>。它只保证同一件事在不同地方长得一样，保证不了这件事本身对不对。真正决定这个站点像不像「朱砂配宣纸」的，是那些没人写进变量的地方——0
+              圆角、1px 线、衬线标题和竖线。
+            </p>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="site-footer__nav" aria-label="页脚导航">
+        <a href="../../index.html">首页</a>
+        <a href="../index.html">文章</a>
+      </nav>
+      <p class="site-footer__copy">© 2026 Zhijian：认真生活，简单做人，用心做事</p>
+    </footer>
+
+    <div class="restore-dock" role="group" aria-label="还原控制">
+      <span class="restore-dock__label">明暗</span>
+      <div class="pill-group" data-scheme-group>
+        <button class="pill is-active" type="button" data-scheme="auto">跟随系统</button>
+        <button class="pill" type="button" data-scheme="light">明色</button>
+        <button class="pill" type="button" data-scheme="dark">暗色</button>
+      </div>
+    </div>
+  </body>
+</html>

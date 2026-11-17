@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zhi Jian 博客 · 简静造物</title>
+    <meta
+      name="description"
+      content="知简的个人站点设计还原：朱砂、宣纸与墨色，衬线标题与 1px 线框组成的克制界面。"
+    />
+    <link rel="icon" href="./assets/logo.webp" type="image/webp" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到正文</a>
+
+    <header class="site-header" data-header>
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html">
+          <img class="brand__logo" src="./assets/logo.webp" alt="" width="32" height="32" />
+          <span class="brand__text">Zhijian</span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+          <a class="site-nav__link is-current" href="./index.html" aria-current="page">
+            首页
+            <span class="site-nav__underline" aria-hidden="true"></span>
+          </a>
+          <a class="site-nav__link" href="./blog/index.html">文章</a>
+        </nav>
+        <nav class="mobile-nav" aria-label="快捷导航">
+          <a
+            class="icon-button is-current"
+            href="./index.html"
+            aria-label="首页"
+            aria-current="page"
+          >
+            <svg class="icon icon--nav" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <path d="M9 22V12h6v10" />
+            </svg>
+          </a>
+          <a class="icon-button" href="./blog/index.html" aria-label="文章">
+            <svg class="icon icon--nav" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M8 6h13M8 12h13M8 18h13" />
+              <path d="M3 6h.01M3 12h.01M3 18h.01" />
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__bg" role="presentation"></div>
+        <div class="hero__overlay" role="presentation"></div>
+        <div class="hero__content">
+          <h1 class="hero__title" id="hero-title">Zhi Jian</h1>
+          <p class="hero__tagline">前端开发 · 全栈 · 简约设计 · 造物</p>
+          <p class="hero__motto">
+            写代码，也写文字；喜欢简洁的设计，追求美好的事物；一切在这里记录。
+          </p>
+          <a class="button button--primary hero__cta" href="#about-me">
+            开始探索
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 5v14M19 12l-7 7-7-7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" id="about-me" aria-labelledby="profile-title">
+        <div class="container">
+          <div class="section-heading">
+            <h2 class="section-heading__title" id="profile-title">个人信息</h2>
+            <span class="section-heading__line" aria-hidden="true"></span>
+          </div>
+
+          <div class="profile">
+            <img
+              class="profile__avatar"
+              src="./assets/profile.webp"
+              alt="Zhi Jian 的头像"
+              width="120"
+              height="120"
+            />
+            <div class="profile__body">
+              <h3 class="profile__name">Zhi Jian</h3>
+              <p class="profile__tagline">前端开发 · 全栈 · 简约设计 · 造物</p>
+              <p class="profile__bio">
+                喜欢简洁的设计，也喜欢安静地写点代码。偶尔捣鼓些小工具，把一闪而过的想法变成看得见的东西。这里没有宏大的叙事，只有一些零散的记录和简单的快乐。
+              </p>
+              <nav class="profile__actions" aria-label="联系方式">
+                <a class="button" href="mailto:yuwb0521@yeah.net">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M4 5h16v14H4z" />
+                    <path d="m4 6 8 6 8-6" />
+                  </svg>
+                  联系我
+                </a>
+                <a
+                  class="button"
+                  href="https://github.com/zhijian521"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M21 14v7H3V3h7" />
+                  </svg>
+                  GitHub
+                </a>
+                <button class="button" type="button" data-copy-feed>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M4 11a9 9 0 0 1 9 9" />
+                    <path d="M4 4a16 16 0 0 1 16 16" />
+                    <circle cx="5" cy="19" r="1" />
+                  </svg>
+                  <span data-copy-feed-label>RSS 订阅</span>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="posts-title">
+        <div class="container">
+          <div class="section-heading">
+            <h2 class="section-heading__title" id="posts-title">最新文章</h2>
+            <span class="section-heading__line" aria-hidden="true"></span>
+            <a class="text-button" href="./blog/index.html">
+              查看全部
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <div class="post-grid">
+            <article class="post-card">
+              <a class="post-card__link" href="./blog/design-tokens/index.html">
+                <div class="post-card__visual">
+                  <img
+                    src="./assets/posts/p-caching.webp"
+                    alt="墨色、宣纸、朱砂与青苔四组色卡"
+                    loading="lazy"
+                    width="1200"
+                    height="637"
+                  />
+                </div>
+                <div class="post-card__body">
+                  <h3 class="post-card__title">用一份设计令牌统一全站的颜色</h3>
+                  <div class="post-card__meta">
+                    <span class="post-card__category">前端</span>
+                    <time class="post-card__date" datetime="2026-06-18">2026 年 6 月 18 日</time>
+                  </div>
+                  <p class="post-card__summary">
+                    颜色不写死在任何组件里。朱砂、宣纸、墨色三层语义变量往下铺，换主题时整页跟着换，组件一行不改。
+                  </p>
+                  <span class="text-button post-card__more">
+                    继续阅读
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            </article>
+
+            <article class="post-card">
+              <a class="post-card__link" href="./blog/index.html">
+                <div class="post-card__visual">
+                  <img
+                    src="./assets/posts/p-mysql.webp"
+                    alt="首页首屏的水墨山水与衬线标题"
+                    loading="lazy"
+                    width="1200"
+                    height="714"
+                  />
+                </div>
+                <div class="post-card__body">
+                  <h3 class="post-card__title">把首页从截图改成代码</h3>
+                  <div class="post-card__meta">
+                    <span class="post-card__category">前端</span>
+                    <time class="post-card__date" datetime="2026-06-05">2026 年 6 月 5 日</time>
+                  </div>
+                  <p class="post-card__summary">
+                    首屏不靠一张设计稿。标题、副标、细边按钮全用代码摆出来，换主题时整页跟着换。
+                  </p>
+                  <span class="text-button post-card__more">
+                    继续阅读
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            </article>
+
+            <article class="post-card">
+              <a class="post-card__link" href="./blog/index.html">
+                <div class="post-card__visual">
+                  <img
+                    src="./assets/posts/p-ink.webp"
+                    alt="三维地球上的空域分层可视化"
+                    loading="lazy"
+                    width="1200"
+                    height="714"
+                  />
+                </div>
+                <div class="post-card__body">
+                  <h3 class="post-card__title">Cesium 里的空域分层</h3>
+                  <div class="post-card__meta">
+                    <span class="post-card__category">工具</span>
+                    <time class="post-card__date" datetime="2026-05-22">2026 年 5 月 22 日</time>
+                  </div>
+                  <p class="post-card__summary">
+                    把二维的航线剖面搬到三维地球上。几层空域叠在一起，线框必须够淡，不然整片天都糊了。
+                  </p>
+                  <span class="text-button post-card__more">
+                    继续阅读
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="projects-title">
+        <div class="container">
+          <div class="section-heading">
+            <h2 class="section-heading__title" id="projects-title">开源项目</h2>
+            <span class="section-heading__line" aria-hidden="true"></span>
+          </div>
+
+          <div class="project-grid">
+            <article class="project-card">
+              <div class="project-card__header">
+                <svg
+                  class="project-card__icon"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="m8 6-6 6 6 6" />
+                  <path d="m16 6 6 6-6 6" />
+                </svg>
+                <h3 class="project-card__title">zhijian</h3>
+              </div>
+              <p class="project-card__description">
+                知简 - 极简个人站点，博客写作、导航书签与后台管理，追求简洁与实用。
+              </p>
+              <div class="tag-row">
+                <span class="tag">Next.js</span>
+                <span class="tag">TypeScript</span>
+              </div>
+              <div class="project-card__actions">
+                <a
+                  class="button"
+                  href="https://yuwb.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M21 14v7H3V3h7" />
+                  </svg>
+                  访问站点
+                </a>
+                <a
+                  class="button"
+                  href="https://github.com/zhijian521/zhijian"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="6" cy="6" r="3" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="8" r="3" />
+                    <path d="M6 9v6M18 11c0 4-12 2-12 4" />
+                  </svg>
+                  GitHub
+                </a>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-card__header">
+                <svg
+                  class="project-card__icon"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M4 5h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4z" />
+                  <path d="M20 5h-7a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h7z" />
+                </svg>
+                <h3 class="project-card__title">cesium-example</h3>
+              </div>
+              <p class="project-card__description">
+                Cesium 三维地球示例集，涵盖地图加载、模型渲染与空间数据可视化。
+              </p>
+              <div class="tag-row">
+                <span class="tag">Cesium</span>
+                <span class="tag">GIS</span>
+              </div>
+              <div class="project-card__actions">
+                <a
+                  class="button"
+                  href="https://yuwb.dev/cesium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M21 14v7H3V3h7" />
+                  </svg>
+                  访问站点
+                </a>
+                <a
+                  class="button"
+                  href="https://github.com/zhijian521/cesium-example"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="6" cy="6" r="3" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="8" r="3" />
+                    <path d="M6 9v6M18 11c0 4-12 2-12 4" />
+                  </svg>
+                  GitHub
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="site-footer__nav" aria-label="页脚导航">
+        <a href="./index.html">首页</a>
+        <a href="./blog/index.html">文章</a>
+      </nav>
+      <p class="site-footer__copy">© 2026 Zhijian：认真生活，简单做人，用心做事</p>
+    </footer>
+
+    <div class="restore-dock" role="group" aria-label="还原控制">
+      <span class="restore-dock__label">明暗</span>
+      <div class="pill-group" data-scheme-group>
+        <button class="pill is-active" type="button" data-scheme="auto">跟随系统</button>
+        <button class="pill" type="button" data-scheme="light">明色</button>
+        <button class="pill" type="button" data-scheme="dark">暗色</button>
+      </div>
+    </div>
+  </body>
+</html>
