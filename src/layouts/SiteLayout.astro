@@ -1,11 +1,29 @@
 ---
 import '../styles/global.css';
-import { withBase } from '../lib/paths';
+import { absoluteUrl, siteName, siteDescription, withBase } from '../lib/site';
 interface Props {
   title?: string;
   description?: string;
+  /** 当前页面路径，用于 canonical 与分享链接；缺省取 Astro.url.pathname。 */
+  path?: string;
+  /** 分享卡片图，缺省使用站点标识。 */
+  image?: string;
+  /** 详情页额外注入的结构化数据。 */
+  structuredData?: Record<string, unknown>;
 }
-const { title = '知简设计集', description = '博客、网站与工具的界面存档。' } = Astro.props;
+const {
+  title = siteName,
+  description = siteDescription,
+  path = Astro.url.pathname,
+  image = withBase('brand/logo-paper.png'),
+  structuredData,
+} = Astro.props;
+const canonical = new URL(path, absoluteUrl()).href;
+const ogImage = new URL(image, absoluteUrl()).href;
+const ogType = structuredData ? 'article' : 'website';
+const jsonLd = structuredData
+  ? JSON.stringify({ '@context': 'https://schema.org', ...structuredData })
+  : undefined;
 ---
 
 <!doctype html>
@@ -15,12 +33,14 @@ const { title = '知简设计集', description = '博客、网站与工具的界
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f4f1ea" />
+    <link rel="canonical" href={canonical} />
     <link
       rel="icon"
       href={withBase('favicon.ico')}
       sizes="16x16 24x24 32x32 48x48 64x64 128x128 256x256"
     />
     <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
+    <link rel="apple-touch-icon" href={withBase('favicon.ico')} />
     <link
       rel="preload"
       href={withBase('fonts/MHRounded.woff2')}
@@ -30,7 +50,19 @@ const { title = '知简设计集', description = '博客、网站与工具的界
     />
     <link rel="stylesheet" href={withBase('fonts/rounded.css')} />
     <link rel="stylesheet" href={withBase('styles/scrollbars.css')} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <title>{title}</title>
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
   </head>
   <body>
     <a class="skip-link" href="#main">

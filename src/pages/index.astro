@@ -2,9 +2,10 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Collection from '../components/Collection.astro';
 import { getDesignPages } from '../lib/designs';
+import { withBase } from '../lib/paths';
 const { pages, total } = await getDesignPages();
 ---
 
-<SiteLayout>
+<SiteLayout path={withBase()}>
   <Collection designs={pages[0] ?? []} total={total} nextPage={pages.length > 1 ? 2 : undefined} />
 </SiteLayout>

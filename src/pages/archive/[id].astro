@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PreviewFrame from '../../components/PreviewFrame.astro';
 import BackLink from '../../components/BackLink.astro';
-import { withBase } from '../../lib/paths';
+import { absoluteUrl, withBase } from '../../lib/site';
 export async function getStaticPaths() {
   return (await getCollection('designs')).map((design) => ({
     params: { id: design.id },
@@ -15,7 +15,22 @@ const { data } = design;
 const { Content } = await render(design);
 ---
 
-<SiteLayout title={`${data.title} — 知简设计集`} description={data.description}>
+<SiteLayout
+  title={`${data.title} — 知简设计集`}
+  description={data.description}
+  image={data.cover}
+  structuredData={{
+    '@type': 'CreativeWork',
+    name: data.title,
+    description: data.description,
+    datePublished: data.date,
+    genre: data.category,
+    keywords: data.tags.join(', '),
+    url: absoluteUrl(`archive/${design.id}/`),
+    image: absoluteUrl(data.cover),
+    ...(data.source && { sameAs: [data.source] }),
+  }}
+>
   <div class="shell detail-page">
     <BackLink />
     <header class="detail-header">
