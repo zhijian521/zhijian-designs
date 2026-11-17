@@ -55,6 +55,8 @@
             type="button"
             data-filter-open
             aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="filter-dialog"
           >
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="M4 6h16M7 12h10M10 18h4" />
@@ -111,6 +113,8 @@
                     <img
                       src="../assets/posts/p-caching.webp"
                       alt="墨色、宣纸、朱砂与青苔四组色卡"
+                      width="1200"
+                      height="637"
                       loading="lazy"
                     />
                   </div>
@@ -137,6 +141,8 @@
                     <img
                       src="../assets/posts/p-mysql.webp"
                       alt="首屏的水墨山水与衬线标题"
+                      width="1200"
+                      height="714"
                       loading="lazy"
                     />
                   </div>
@@ -163,6 +169,8 @@
                     <img
                       src="../assets/posts/p-ink.webp"
                       alt="三维地球上的空域分层可视化"
+                      width="1200"
+                      height="714"
                       loading="lazy"
                     />
                   </div>
@@ -188,6 +196,8 @@
                     <img
                       src="../assets/posts/p-nesting.webp"
                       alt="Cesium 示例集首页版面"
+                      width="1200"
+                      height="722"
                       loading="lazy"
                     />
                   </div>
@@ -208,7 +218,7 @@
         </div>
       </div>
 
-      <dialog class="filter-dialog" data-filter-dialog aria-label="文章筛选">
+      <dialog class="filter-dialog" id="filter-dialog" data-filter-dialog aria-label="文章筛选">
         <header class="filter-dialog__header">
           <h2 class="filter-dialog__title">筛选</h2>
           <button class="icon-button" type="button" data-filter-close aria-label="关闭筛选">

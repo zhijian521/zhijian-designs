@@ -25,7 +25,8 @@
       root.removeAttribute('data-scheme');
     }
 
-    var buttons = document.querySelectorAll('[data-scheme]');
+    /* 档位按钮限定在分组里，避免选中 <html> 自身时给根元素挂上 state 属性 */
+    var buttons = document.querySelectorAll('[data-scheme-group] button[data-scheme]');
     for (var i = 0; i < buttons.length; i += 1) {
       var active = buttons[i].getAttribute('data-scheme') === scheme;
       buttons[i].classList.toggle('is-active', active);
@@ -39,7 +40,7 @@
     var target = event.target;
 
     if (target && target.closest) {
-      var schemeButton = target.closest('[data-scheme]');
+      var schemeButton = target.closest('[data-scheme-group] button[data-scheme]');
       if (schemeButton) {
         var next = schemeButton.getAttribute('data-scheme');
         try {
@@ -125,8 +126,13 @@
     if (openTrigger) {
       openTrigger.addEventListener('click', function () {
         filterDialog.showModal();
+        openTrigger.setAttribute('aria-expanded', 'true');
       });
     }
+    /* 关闭可能来自关闭按钮、遮罩或 Esc，统一在 close 事件里收回触发器状态 */
+    filterDialog.addEventListener('close', function () {
+      if (openTrigger) openTrigger.setAttribute('aria-expanded', 'false');
+    });
     var closeTrigger = filterDialog.querySelector('[data-filter-close]');
     if (closeTrigger) {
       closeTrigger.addEventListener('click', closeFilter);
