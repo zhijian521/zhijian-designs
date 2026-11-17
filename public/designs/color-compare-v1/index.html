@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>色彩对比工作台 · 24 色</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="topStrip"></div>
+
+    <div class="wrap">
+      <header>
+        <div class="kicker">Palette Comparison</div>
+        <h1>色彩对比工作台 · <em>两组色板 · 24 色</em></h1>
+        <p class="lede">
+          把两组色板并排放到一起：点击任意色块加入底部对比栏，即可查看色彩数值、两两对比度（WCAG
+          2.1）与 CIE76 色差（ΔE），判断哪些颜色足够区分、哪些容易混淆。
+        </p>
+        <div class="stats">
+          <div class="stat"><b>24</b><span>个颜色</span></div>
+          <div class="stat"><b>2</b><span>组色板</span></div>
+          <div class="stat"><b>4</b><span>最多同屏对比</span></div>
+          <div class="stat"><b>ΔE · WCAG</b><span>双维度度量</span></div>
+        </div>
+      </header>
+
+      <section>
+        <div class="sec-head">
+          <h2>色卡</h2>
+          <span class="desc">点击选中 · 悬停可复制 HEX</span>
+        </div>
+        <div class="toolbar">
+          <span class="label">组内排序</span>
+          <div class="seg" id="sortSeg">
+            <button data-sort="default" class="on">默认</button>
+            <button data-sort="hue">按色相</button>
+            <button data-sort="light">按明度</button>
+            <button data-sort="name">按名称</button>
+          </div>
+          <span class="label" style="margin-left: 8px">显示</span>
+          <div class="seg" id="metaSeg">
+            <button data-meta="rgb" class="on">RGB</button>
+            <button data-meta="cmyk">CMYK</button>
+            <button data-meta="pms">PMS</button>
+          </div>
+        </div>
+        <div id="groupA"></div>
+        <div id="groupB" style="margin-top: 34px"></div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <h2>色相带</h2>
+          <span class="desc">全部 24 色按色相角排列</span>
+        </div>
+        <div class="strip" id="strip"></div>
+        <div class="strip-legend">
+          <span>灰 → 红 → 黄 → 绿 → 蓝 → 紫</span><span>点击色段加入对比</span>
+        </div>
+      </section>
+
+      <div class="notes">
+        <h3>关于数值</h3>
+        <ul>
+          <li>
+            <b>第一组</b>仅提供 HEX，RGB 由 HEX 精确换算；<b>第二组</b>的 CMYK 与 PMS 为原始标注值。
+          </li>
+          <li>
+            第一组的 CMYK 为 <code>RGB → CMYK</code> 的无色彩管理近似换算（标注
+            ≈），仅用于参考排序，不能直接交付印刷；实际印刷请以 Pantone 色卡或打样为准。
+          </li>
+          <li>
+            <b>对比度</b>按 WCAG 2.1 相对亮度公式计算，<code>≥ 4.5:1</code> 满足正文 AA，<code
+              >≥ 7:1</code
+            >
+            满足 AAA；<code>3:1</code> 为图形与大字号下限。
+          </li>
+          <li>
+            <b>ΔE（CIE76）</b>用于衡量色差：<code>&lt; 5</code> 肉眼几乎不可分，<code>5–15</code>
+            相近，<code>&gt; 15</code> 明显不同。数值越大越容易区分。
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dock">
+      <div class="dock-inner">
+        <div class="panel" id="panel"><div class="panel-inner" id="panelInner"></div></div>
+        <div class="bar">
+          <span class="bar-label">对比栏</span>
+          <div class="chips" id="chips">
+            <span class="hint">点击色块加入对比（最多 4 个）</span>
+          </div>
+          <div class="bar-right">
+            <button class="btn ghost" id="clearBtn">清空</button>
+            <button class="btn primary" id="cmpBtn" disabled>选择至少 2 色</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
