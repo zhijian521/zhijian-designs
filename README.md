@@ -46,7 +46,7 @@ colors: ['#F6F3EC', '#292D28']
 ---
 ```
 
-当前收录两份：语无边 · 个人博客（`simple-blog-v1`，来自 [simple-blog](https://github.com/zhijian521/simple-blog) 的固定提交）与色彩对比工作台（`color-compare-v1`）。
+当前收录三份：语无边 · 个人博客（`simple-blog-v1`，来自 [simple-blog](https://github.com/zhijian521/simple-blog) 的固定提交）、色彩对比工作台（`color-compare-v1`）与梦幻助手 · 设计语言（`mh-toolbox-v1`，来自 [mh-toolbox-rs](https://github.com/zhijian521/mh-toolbox-rs) 的固定提交）。
 
 ## 结构
 
@@ -66,7 +66,7 @@ scripts/               新增脚本、字体子集、链接校验
 
 ## 字体
 
-展示站与模板使用资源圆体子集 `MHRounded.woff2`（SIL OFL 1.1，许可见 `public/fonts/`），经 `--font-ui` 应用。`npm run subset:font` 扫描 `src/`、`templates/` 与显式引用 `rounded.css` 的作品页，从 `assets/fonts/MHRounded.full.woff2` 裁出子集；改文案后重跑即可，缺字回退系统字体。真实案例保留原设计字体，随作品保存。
+展示站与模板使用资源圆体子集 `MHRounded.woff2`（SIL OFL 1.1，许可见 `public/fonts/`），经 `--font-ui` 应用。`npm run subset:font` 扫描 `src/`、`templates/` 与显式引用 `rounded.css` 的作品页，从 `assets/fonts/MHRounded.full.woff2` 裁出子集；改文案后重跑即可，缺字回退系统字体。真实案例保留原设计字体，随作品保存；自带字体的作品由 `scripts/subset-design-font.mjs` 单独裁剪，不进站点共享子集。
 
 ## 部署
 

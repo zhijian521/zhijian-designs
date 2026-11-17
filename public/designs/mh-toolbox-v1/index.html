@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="zh-CN" data-style="ledger" data-scheme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>梦幻助手设计语言 · 账簿方向</title>
+    <meta
+      name="description"
+      content="梦幻养老助手的设计语言：宣纸米白作底、墨色作字、朱红作印，六套主题与三件材质。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">跳到正文</a>
+
+    <header class="masthead">
+      <div class="shell">
+        <div class="frame masthead-frame">
+          <div class="masthead-top">
+            <span class="plaque" aria-hidden="true">梦</span>
+            <div>
+              <p class="kicker">MH TOOLBOX · DESIGN LANGUAGE</p>
+              <h1>账簿方向</h1>
+            </div>
+          </div>
+          <p class="lede">
+            梦幻养老助手是梦幻西游的本地工作台，界面的底子是账簿：宣纸米白作纸、暖墨作字、朱红作印。
+            下面这一页是它的设计语言本身——色、材质、控件与六套主题，全部取自同一份设计令牌，
+            切换主题时整页跟着换，不是贴上去的示意图。
+          </p>
+          <ul class="axioms">
+            <li>
+              <span class="section-mark" aria-hidden="true"></span>
+              <b>纸是暖的，不用纯白</b>
+              <span>墨是灰的，不用纯黑。两者都必须压得住朱红。</span>
+            </li>
+            <li>
+              <span class="section-mark" aria-hidden="true"></span>
+              <b>结构靠线，不靠阴影</b>
+              <span>分区用文武线（外粗内细），行分隔用一根细线。</span>
+            </li>
+            <li>
+              <span class="section-mark" aria-hidden="true"></span>
+              <b>朱红只给三处</b>
+              <span>区块标、当前选中、金额支出。到处都是朱红等于没有朱红。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <div class="control-dock">
+      <div class="shell dock-inner">
+        <div class="dock-group">
+          <span class="group-head"><span class="section-mark" aria-hidden="true"></span>主题</span>
+          <div class="pill-group" id="styleGroup" role="group" aria-label="切换主题"></div>
+        </div>
+        <div class="dock-group">
+          <span class="group-head"><span class="section-mark" aria-hidden="true"></span>明暗</span>
+          <div class="pill-group" id="schemeGroup" role="group" aria-label="切换明暗"></div>
+        </div>
+        <div class="dock-group">
+          <span class="group-head"><span class="section-mark" aria-hidden="true"></span>字号</span>
+          <div class="pill-group" id="scaleGroup" role="group" aria-label="切换字号"></div>
+        </div>
+      </div>
+    </div>
+
+    <main id="main" class="shell">
+      <section class="block board" aria-labelledby="palette-title">
+        <div class="group-head">
+          <span class="section-mark" aria-hidden="true"></span>01 纸、墨与朱
+        </div>
+        <h2 id="palette-title">调色板</h2>
+        <p class="block-lede">
+          左侧四枚是纸与线，右侧四枚是墨与彩。它们都不写死色值，而是主题里的一行变量——
+          换主题时，同一个变量名换的是另一套纸。
+        </p>
+        <ul class="swatches" id="swatches"></ul>
+      </section>
+
+      <section class="block board" aria-labelledby="material-title">
+        <div class="group-head">
+          <span class="section-mark" aria-hidden="true"></span>02 三件材质
+        </div>
+        <h2 id="material-title">纸面、凹槽与印面</h2>
+        <p class="block-lede">
+          全站只有三件材质，组件只消费变量，不各写一份配方。纸面上亮下暗；凹槽是陷进纸里的一格；
+          印面是一块灌了朱色、按下去会缩回来的面。
+        </p>
+        <div class="material-grid">
+          <article class="mat-card board">
+            <h3>纸面</h3>
+            <p>
+              内容卡的底。顶边受光、下沿留断面，再加一层硬影与一层软影——纸片被抬离桌面一次，
+              厚度只有一种。
+            </p>
+            <div class="mat-demo board mat-inner">
+              <span class="meta">账目 2026 年 11 月</span>
+              <b class="num">1,087.33 万</b>
+            </div>
+          </article>
+          <article class="mat-card board">
+            <h3>凹槽</h3>
+            <p>
+              输入格与数字格。左壁与顶口压暗、右下壁受光，不往外落影——它是陷下去的， 不是浮起来的。
+            </p>
+            <div class="mat-demo">
+              <div class="slip-rows">
+                <div class="slip-row">
+                  <span class="slip-name">气血</span>
+                  <span class="num-slot num">3916</span>
+                </div>
+                <div class="slip-row">
+                  <span class="slip-name">伤害</span>
+                  <span class="num-slot num">1591</span>
+                </div>
+                <div class="slip-row">
+                  <span class="slip-name">速度</span>
+                  <span class="num-slot num">455</span>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="mat-card board">
+            <h3>印面</h3>
+            <p>
+              选中态不是描边也不是变亮，是把槽灌满朱红——像把印泥按进纸里。按下时渐变倒过来，
+              同一枚印被压回纸面。
+            </p>
+            <div class="mat-demo mat-stamps">
+              <button type="button" class="bevel-pill on">总览</button>
+              <button type="button" class="bevel-pill">收益</button>
+              <button type="button" class="stamp-btn">记一笔</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="block board" aria-labelledby="control-title">
+        <div class="group-head"><span class="section-mark" aria-hidden="true"></span>03 控件</div>
+        <h2 id="control-title">分段胶囊、票面与小签</h2>
+        <p class="block-lede">
+          凹槽胶囊不能直接躺在页面底色上——槽只比纸深一档，直接摆会读成一片淡黄。
+          所以先垫一层承载面，槽才有对照。这是容器的职责。
+        </p>
+        <div class="control-grid">
+          <div class="demo-cell">
+            <span class="group-head">分段胶囊</span>
+            <div class="pill-group">
+              <button type="button" class="bevel-pill on">属性</button>
+              <button type="button" class="bevel-pill">师门</button>
+              <button type="button" class="bevel-pill">辅助</button>
+              <button type="button" class="bevel-pill">修炼</button>
+            </div>
+            <p class="hint">悬停时边框洇开一点朱，选中时整枚灌朱。</p>
+          </div>
+          <div class="demo-cell">
+            <span class="group-head">小签</span>
+            <div class="chips">
+              <span class="chip">五庄观</span>
+              <span class="chip">130 级</span>
+              <span class="chip chip-action">可点候选</span>
+            </div>
+            <p class="hint">静态签只有一句话：这是个分类。可点的那档比它深一档。</p>
+          </div>
+          <div class="demo-cell">
+            <span class="group-head">读数</span>
+            <div class="readout">
+              <div><span>梦幻币收入</span><b class="gain num">4,887.33 万</b></div>
+              <div><span>点卡消耗</span><b class="loss num">54 万</b></div>
+              <div><span>在线时长</span><b class="num">06:00</b></div>
+              <div><span>进行中目标</span><b class="num">1 项</b></div>
+            </div>
+            <p class="hint">数用赭，名目用灰褐。眼睛先落在数上——这正是这张卡要回答的东西。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block board" aria-labelledby="theme-title">
+        <div class="group-head">
+          <span class="section-mark" aria-hidden="true"></span>04 六套主题
+        </div>
+        <h2 id="theme-title">同一套结构，六种纸</h2>
+        <p class="block-lede">
+          换主题只改令牌，不改组件。每一张卡都用自己那套配色渲染了一段真实界面，
+          点上方「主题」可以把整页换成它。
+        </p>
+        <div class="theme-grid" id="themeGrid"></div>
+      </section>
+
+      <section class="block board" aria-labelledby="module-title">
+        <div class="group-head"><span class="section-mark" aria-hidden="true"></span>05 模块</div>
+        <h2 id="module-title">把控件拼成页面</h2>
+        <p class="block-lede">
+          纸面、凹槽、印面与三种控件反复组合，就是应用里真实的一块块版面。
+          下面四块都是从原界面按同一套令牌复刻的模块，换主题时整块跟着换。
+        </p>
+        <div class="module-grid">
+          <article class="mod-card board mod-wide">
+            <div class="mod-head">
+              <div>
+                <span class="group-head"
+                  ><span class="section-mark" aria-hidden="true"></span>日常 · 养成 · 收获</span
+                >
+                <h3>工作台</h3>
+                <p class="mod-note">4 个角色，0 个在线，1 个项目进行中。</p>
+              </div>
+              <button type="button" class="chip chip-action">历史</button>
+            </div>
+            <div class="mod-stats">
+              <div class="mod-stat">
+                <span>速记净额</span>
+                <b class="num">1,087.33 万</b>
+                <span class="mod-sub">点卡消耗 54 万</span>
+              </div>
+              <div class="mod-stat">
+                <span>在线时长</span>
+                <b class="num">06:00</b>
+                <span class="mod-sub">进行中目标 1 项</span>
+              </div>
+              <div class="mod-stat">
+                <span>本月收入</span>
+                <b class="num gain">4,887.33 万</b>
+                <span class="mod-sub">人民币 1,386 元</span>
+              </div>
+              <div class="mod-stat">
+                <span>本月支出</span>
+                <b class="num loss">1,314 万</b>
+                <span class="mod-sub">人民币 600 元</span>
+              </div>
+            </div>
+            <div class="mod-actions">
+              <button type="button" class="stamp-btn">上线</button>
+              <button type="button" class="chip chip-action">补记</button>
+              <button type="button" class="chip chip-action">截图更新</button>
+            </div>
+          </article>
+
+          <article class="mod-card board">
+            <div class="mod-head">
+              <div>
+                <span class="group-head"
+                  ><span class="section-mark" aria-hidden="true"></span>角色档案</span
+                >
+                <h3>归心岚 <span class="chip">130 级</span></h3>
+                <p class="mod-note">五庄观 · 陕西区 · 大雁塔</p>
+              </div>
+            </div>
+            <div class="pill-group mod-pills">
+              <button type="button" class="bevel-pill on">属性</button>
+              <button type="button" class="bevel-pill">师门</button>
+              <button type="button" class="bevel-pill">辅助</button>
+              <button type="button" class="bevel-pill">修炼</button>
+            </div>
+            <div class="slip-rows mod-slips">
+              <div class="slip-row">
+                <span class="slip-name">气血</span><span class="num-slot num">3916</span>
+              </div>
+              <div class="slip-row">
+                <span class="slip-name">伤害</span><span class="num-slot num">1591</span>
+              </div>
+              <div class="slip-row">
+                <span class="slip-name">防御</span><span class="num-slot num">826</span>
+              </div>
+              <div class="slip-row">
+                <span class="slip-name">速度</span><span class="num-slot num">455</span>
+              </div>
+            </div>
+            <div class="mod-meter">
+              <span>经验</span>
+              <div class="track"><i style="width: 88%"></i></div>
+              <b class="num">3,777.2 万</b>
+            </div>
+          </article>
+
+          <article class="mod-card board">
+            <div class="mod-head">
+              <div>
+                <span class="group-head"
+                  ><span class="section-mark" aria-hidden="true"></span>目标</span
+                >
+                <h3>攒一套心仪装备</h3>
+                <p class="mod-note">存钱 · 3 个角色</p>
+              </div>
+              <span class="chip">全部</span>
+            </div>
+            <div class="goal-row">
+              <span class="meta">01</span>
+              <b>已存 62%</b>
+              <span class="num">目标 1 亿</span>
+            </div>
+            <div class="track goal-track"><i style="width: 62%"></i></div>
+            <div class="goal-list">
+              <div class="slip-row">
+                <span class="slip-name">梦幻币</span><span class="num-slot num">6,200 万</span>
+              </div>
+              <div class="slip-row">
+                <span class="slip-name">还差</span><span class="num-slot num">3,800 万</span>
+              </div>
+            </div>
+            <div class="goal-log">
+              <span class="group-head"
+                ><span class="section-mark" aria-hidden="true"></span>最近三笔</span
+              >
+              <div class="slip-row">
+                <span class="slip-name">副本奖励</span>
+                <span class="meta">11-17</span>
+                <span class="num-slot num">+79.33 万</span>
+              </div>
+              <div class="slip-row">
+                <span class="slip-name">师门任务</span>
+                <span class="meta">11-17</span>
+                <span class="num-slot num">+24 万</span>
+              </div>
+              <div class="slip-row">
+                <span class="slip-name">点卡消耗</span>
+                <span class="meta">11-17</span>
+                <span class="num-slot num">-18 万</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="mod-card board mod-wide">
+            <div class="mod-head">
+              <div>
+                <span class="group-head"
+                  ><span class="section-mark" aria-hidden="true"></span>常用功能</span
+                >
+                <h3>八宫格入口</h3>
+                <p class="mod-note">功能格没有阴影，只靠纸面与线区分层级。</p>
+              </div>
+              <button type="button" class="chip chip-action">自定义</button>
+            </div>
+            <div class="feature-grid">
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M2.5 11.5l1-3 6.2-6.2 2 2-6.2 6.2-3 1z" />
+                </svg>
+                <span>记一笔</span>
+                <em>收入与支出</em>
+              </button>
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M8 3v10M3 8h10" />
+                </svg>
+                <span>添加物价</span>
+                <em>新增物品行情</em>
+              </button>
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M7 2.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM10.4 10.4 14 14" />
+                </svg>
+                <span>捉鬼助手</span>
+                <em>把常刷的任务记成一行</em>
+              </button>
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path
+                    d="M8 5.5V8l1.8 1.2M4.6 3.2 3 4.8M11.4 3.2 13 4.8M8 2.2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"
+                  />
+                </svg>
+                <span>闹钟</span>
+                <em>到点前五分钟提醒</em>
+              </button>
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M2.5 4.5h11v8h-11zM2.5 4.5 8 8.6l5.5-4.1" />
+                </svg>
+                <span>物品速记</span>
+                <em>记录游戏产出</em>
+              </button>
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M8 2.5v11M2.5 8h11" />
+                </svg>
+                <span>新增目标</span>
+                <em>设定养成计划</em>
+              </button>
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M2.5 4h11v9.5h-11zM2.5 6.6h11M5.6 2.4v2.6M10.4 2.4v2.6" />
+                </svg>
+                <span>活动日历</span>
+                <em>今天有什么、这周哪天忙</em>
+              </button>
+              <button type="button" class="feature">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M3 12.5V7M8 12.5V4M13 12.5V9" />
+                </svg>
+                <span>在线记录</span>
+                <em>时长与点卡</em>
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="colophon">
+        <div class="frame colophon-frame">
+          <div class="colophon-grid">
+            <div>
+              <span class="group-head">字体</span>
+              <p>
+                正文为霞鹜文楷 Screen（SIL OFL 1.1），本页取 GB2312 常用字子集。
+                应用内可切换到资源圆体或思源黑体，三者共用同一枚字体令牌。
+              </p>
+            </div>
+            <div>
+              <span class="group-head">来源</span>
+              <p>
+                色值、材质与主题均取自梦幻助手的
+                <code>src/styles/tokens.css</code>，本页是对该文件的静态还原， 不是另起的一套视觉。
+              </p>
+            </div>
+            <div>
+              <span class="group-head">许可</span>
+              <p>
+                梦幻助手以 PolyForm Noncommercial 1.0.0 发布，仅限非商业用途； 字体许可随附于本目录
+                <code>licenses/</code>。
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
