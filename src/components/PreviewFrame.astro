@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/paths';
 interface Props {
   src: string;
   title: string;
@@ -29,33 +30,173 @@ const { src, title } = Astro.props;
           手机
         </button>
       </div>
-      <span id="preview-width" aria-live="polite">
-        100%
-      </span>
+      <div class="preview-actions" role="group" aria-label="预览显示">
+        <button type="button" data-zoom="out" aria-label="缩小预览" title="缩小预览">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14" />
+          </svg>
+        </button>
+        <button type="button" data-zoom="reset" aria-label="重置缩放为 100%" title="重置缩放">
+          <span id="preview-zoom" aria-live="polite">
+            100%
+          </span>
+        </button>
+        <button type="button" data-zoom="in" aria-label="放大预览" title="放大预览">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14M12 5v14" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="fullscreen-control"
+          aria-label="全屏预览"
+          title="全屏预览"
+          aria-pressed="false"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            aria-hidden="true"
+          >
+            <path class="expand-icon" d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5" />
+            <path class="collapse-icon" d="M4 9h5V4m11 5h-5V4M9 20v-5H4m11 5v-5h5" />
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="preview-stage">
-      <iframe
-        id="design-preview"
-        src={src}
-        title={`${title}的独立界面预览`}
-        loading="lazy"
-        style="width:100%"
-      ></iframe>
+      <div class="preview-viewport">
+        <iframe
+          id="design-preview"
+          src={src}
+          title={`${title}的独立界面预览`}
+          loading="lazy"
+          data-scrollbars={withBase('styles/scrollbars.css')}
+        ></iframe>
+      </div>
     </div>
   </div>
 </section>
 <script>
   const frame = document.querySelector<HTMLIFrameElement>('#design-preview')!;
+  const shell = document.querySelector<HTMLElement>('.preview-shell')!;
+  const stage = shell.querySelector<HTMLElement>('.preview-stage')!;
+  const viewport = shell.querySelector<HTMLElement>('.preview-viewport')!;
   const controls = document.querySelectorAll<HTMLButtonElement>('[data-width]');
+  const zoomOut = shell.querySelector<HTMLButtonElement>('[data-zoom="out"]')!;
+  const zoomIn = shell.querySelector<HTMLButtonElement>('[data-zoom="in"]')!;
+  const fullscreen = shell.querySelector<HTMLButtonElement>('.fullscreen-control')!;
+  let deviceWidth = '100%';
+  let zoom = 100;
+
+  function renderPreview() {
+    const style = getComputedStyle(stage);
+    const width =
+      stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const height =
+      stage.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    const logicalWidth = deviceWidth === '100%' ? width : parseInt(deviceWidth);
+    const scale = zoom / 100;
+    // 外层占据缩放后的尺寸，iframe 保留设备视口宽度，避免变换留下空白或裁掉内容。
+    viewport.style.width = `${logicalWidth * scale}px`;
+    frame.style.width = `${logicalWidth}px`;
+    frame.style.height = `${height / scale}px`;
+    frame.style.transform = `scale(${scale})`;
+    shell.querySelector('#preview-zoom')!.textContent = `${zoom}%`;
+    zoomOut.disabled = zoom === 50;
+    zoomIn.disabled = zoom === 150;
+  }
+
   controls.forEach((button) =>
     button.addEventListener('click', () => {
-      const width = button.dataset.width!;
-      frame.style.width = width;
-      document.querySelector('#preview-width')!.textContent =
-        width === '100%' ? '100%' : width.replace('px', ' px');
+      deviceWidth = button.dataset.width!;
       controls.forEach((control) =>
         control.setAttribute('aria-pressed', String(control === button)),
       );
+      renderPreview();
     }),
   );
+
+  shell.querySelectorAll<HTMLButtonElement>('[data-zoom]').forEach((button) => {
+    button.addEventListener('click', () => {
+      zoom =
+        button.dataset.zoom === 'reset'
+          ? 100
+          : Math.min(150, Math.max(50, zoom + (button === zoomIn ? 10 : -10)));
+      renderPreview();
+    });
+  });
+
+  function syncFullscreen() {
+    const expanded =
+      document.fullscreenElement === shell || shell.classList.contains('is-expanded');
+    const label = expanded ? '退出全屏' : '全屏预览';
+    fullscreen.setAttribute('aria-label', label);
+    fullscreen.setAttribute('title', expanded ? '退出全屏（Esc）' : label);
+    fullscreen.setAttribute('aria-pressed', String(expanded));
+    document.documentElement.classList.toggle(
+      'preview-expanded',
+      shell.classList.contains('is-expanded'),
+    );
+  }
+
+  function closeExpanded(event: KeyboardEvent) {
+    if (event.key === 'Escape' && shell.classList.contains('is-expanded')) {
+      shell.classList.remove('is-expanded');
+      syncFullscreen();
+      fullscreen.focus();
+    }
+  }
+
+  fullscreen.addEventListener('click', async () => {
+    if (document.fullscreenElement === shell) {
+      await document.exitFullscreen();
+    } else if (shell.classList.contains('is-expanded')) {
+      shell.classList.remove('is-expanded');
+    } else {
+      try {
+        await shell.requestFullscreen();
+      } catch {
+        // 不支持原生全屏的浏览器仍可展开到窗口大小。
+        shell.classList.add('is-expanded');
+      }
+    }
+    syncFullscreen();
+  });
+  document.addEventListener('fullscreenchange', syncFullscreen);
+  document.addEventListener('keydown', closeExpanded);
+
+  function stylePreviewScrollbars() {
+    const doc = frame.contentDocument;
+    if (!doc?.head || doc.querySelector('[data-preview-scrollbars]')) return;
+    const link = doc.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = frame.dataset.scrollbars!;
+    link.dataset.previewScrollbars = '';
+    doc.head.append(link);
+    doc.addEventListener('keydown', closeExpanded);
+  }
+  frame.addEventListener('load', stylePreviewScrollbars);
+  stylePreviewScrollbars();
+  new ResizeObserver(renderPreview).observe(stage);
 </script>

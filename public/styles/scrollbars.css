@@ -1,0 +1,38 @@
+/* 展示站与预览共用，不改写存档作品本身的样式。 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b9b4a8 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #b9b4a8;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a44631;
+}
+
+/* Chromium 使用可精确控制宽度和悬停颜色的伪元素样式。 */
+@supports selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+}
+
+@media (forced-colors: active) {
+  * {
+    scrollbar-color: auto;
+  }
+}
