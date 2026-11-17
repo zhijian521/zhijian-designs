@@ -5,7 +5,7 @@ category: 博客
 tags: [浅色, 极简, 文字排版]
 date: '2026-11-17'
 version: v1
-cover: designs/simple-blog-v1/assets/cover.png
+cover: designs/simple-blog-v1/assets/cover.webp
 preview: designs/simple-blog-v1/index.html
 colors: ['#F8F8F5', '#1C1D1B', '#1F615F']
 source: https://github.com/zhijian521/simple-blog

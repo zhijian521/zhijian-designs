@@ -135,9 +135,11 @@
     border-radius: 10px;
   }
   .card-cover img {
+    display: block;
     width: 100%;
-    /* 比例来自封面真实尺寸，夹在 3:4–3:2 之间，避免竖版封面把网格拉得过长。 */
-    aspect-ratio: var(--cover-ratio, 3 / 2);
+    /* 统一 3:2：封面原图可能是 3:2 截图，也可能是整页长截屏，
+       按同一比例裁切才能让同排卡片等高对齐；裁切锚点保留顶部标题区。 */
+    aspect-ratio: 3 / 2;
     object-fit: cover;
     object-position: top;
     transition: transform 0.25s;
