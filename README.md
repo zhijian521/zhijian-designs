@@ -46,7 +46,7 @@ colors: ['#F6F3EC', '#292D28']
 ---
 ```
 
-当前收录「语无边 · 个人博客」（`simple-blog-v1`），来自 [simple-blog](https://github.com/zhijian521/simple-blog) 的固定提交。
+当前收录两份：语无边 · 个人博客（`simple-blog-v1`，来自 [simple-blog](https://github.com/zhijian521/simple-blog) 的固定提交）与色彩对比工作台（`color-compare-v1`）。
 
 ## 结构
 
