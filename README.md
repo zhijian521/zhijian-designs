@@ -85,7 +85,14 @@ scripts/check-links.mjs    dist 内部链接校验
 
 静态托管平台构建命令为 `npm run build`，输出目录 `dist`。
 
-`SITE_URL` 决定 canonical、分享卡片与 sitemap 里的绝对地址，默认 `https://zhijian521.github.io`；绑定自有域名时设为该域名。GitHub Pages 仓库子目录设置环境变量 `DEPLOY_BASE=/zhijian-designs/`；根域名无需设置。PowerShell 示例：
+默认站点地址是 `https://designs.yuwb.dev`，`SITE_URL` 决定 canonical、分享卡片、`sitemap-index.xml` 与 `robots.txt` 里的绝对地址。根域名部署不需要任何环境变量：
+
+```sh
+npm run build
+npm run check:links
+```
+
+改用仓库子目录（如 GitHub Pages）时同时设置 `SITE_URL` 与 `DEPLOY_BASE`。PowerShell 示例：
 
 ```powershell
 $env:DEPLOY_BASE='/zhijian-designs/'
@@ -96,4 +103,4 @@ npm run preview
 Remove-Item Env:DEPLOY_BASE, Env:SITE_URL
 ```
 
-此时预览地址为 `/zhijian-designs/`。`sitemap-index.xml` 与 `robots.txt` 随构建输出，存档作品（`/designs/`）不进入索引，各自保留独立页面。
+此时预览地址为 `/zhijian-designs/`。`sitemap-index.xml` 与 `robots.txt` 随构建输出；`robots.txt` 由 `src/pages/robots.txt.ts` 生成，其中的 sitemap 地址跟随当前 `SITE_URL` 与 `DEPLOY_BASE`。存档作品（`/designs/`）不进入索引，各自保留独立页面。

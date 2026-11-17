@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /designs/
-
-Sitemap: https://zhijian521.github.io/sitemap-index.xml

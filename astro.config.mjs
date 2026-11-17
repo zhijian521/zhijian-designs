@@ -1,8 +1,9 @@
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
-// GitHub Pages 子目录部署：SITE_URL=https://<user>.github.io DEPLOY_BASE=/zhijian-designs/
-const site = process.env.SITE_URL || 'https://zhijian521.github.io';
+// 正式部署在根域名 designs.yuwb.dev；改用仓库子目录时可设
+// SITE_URL=https://zhijian521.github.io DEPLOY_BASE=/zhijian-designs/
+const site = process.env.SITE_URL || 'https://designs.yuwb.dev';
 
 export default defineConfig({
   site,
