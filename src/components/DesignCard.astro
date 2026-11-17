@@ -1,20 +1,29 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { withBase } from '../lib/paths';
+import { readPublicImageSize } from '../lib/imageSize';
 interface Props {
   design: CollectionEntry<'designs'>;
 }
 const { design } = Astro.props;
 const { data, id } = design;
+// 封面比例各不相同（示例作品多为 3:2，实拍归档可能是竖版），按真实尺寸声明避免布局跳动与裁切。
+const cover = readPublicImageSize(data.cover);
+const coverRatio = Math.min(1.5, Math.max(0.75, cover.width / cover.height));
 ---
 
 <article class="design-card">
-  <a class="card-cover" href={withBase(`archive/${id}/`)} aria-label={`查看${data.title}`}>
+  <a
+    class="card-cover"
+    href={withBase(`archive/${id}/`)}
+    aria-label={`查看${data.title}`}
+    style={{ '--cover-ratio': String(coverRatio) }}
+  >
     <img
       src={withBase(data.cover)}
       alt={`${data.title}界面封面`}
-      width="1200"
-      height="800"
+      width={cover.width}
+      height={cover.height}
       loading="lazy"
     />
   </a>
