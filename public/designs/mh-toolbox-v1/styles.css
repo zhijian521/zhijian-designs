@@ -53,9 +53,7 @@
 
   /* ---------- 动效：时长按距离分档 ---------- */
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-snap: cubic-bezier(0.34, 1.28, 0.6, 1);
   --t-quick: 120ms;
-  --t-mid: 180ms;
   --t-press: 200ms;
   --t-shape: 220ms;
 }
@@ -107,8 +105,6 @@
   --bevel-lo: #3a33241f;
   --shadow: #2f2a2414;
   --shadow-lg: #2f2a242e;
-  --scrollbar-thumb: #c4b189;
-  --scrollbar-thumb-hover: #a79066;
 }
 [data-style='ledger'][data-scheme='dark'] {
   --paper-base: #f8f3e6;
@@ -133,8 +129,6 @@
   --bevel-lo: #0000008c;
   --shadow: #00000059;
   --shadow-lg: #00000080;
-  --scrollbar-thumb: #4b4130;
-  --scrollbar-thumb-hover: #665a41;
 }
 
 [data-style='celadon'] {
@@ -159,8 +153,6 @@
   --bevel-lo: #163f2a1c;
   --shadow: #264a3614;
   --shadow-lg: #264a3629;
-  --scrollbar-thumb: #9eb9a9;
-  --scrollbar-thumb-hover: #7b9e89;
 }
 [data-style='celadon'][data-scheme='dark'] {
   --bg: #0f1915;
@@ -184,8 +176,6 @@
   --bevel-lo: #000b0780;
   --shadow: #00080666;
   --shadow-lg: #0008068c;
-  --scrollbar-thumb: #3d5b4b;
-  --scrollbar-thumb-hover: #557b64;
 }
 
 [data-style='azure'] {
@@ -210,8 +200,6 @@
   --bevel-lo: #23476f1c;
   --shadow: #27476c14;
   --shadow-lg: #27476c24;
-  --scrollbar-thumb: #a9bdd5;
-  --scrollbar-thumb-hover: #839fc1;
 }
 [data-style='azure'][data-scheme='dark'] {
   --bg: #101922;
@@ -235,8 +223,6 @@
   --bevel-lo: #030e1c80;
   --shadow: #030d1766;
   --shadow-lg: #030d178c;
-  --scrollbar-thumb: #435f7e;
-  --scrollbar-thumb-hover: #6382a3;
 }
 
 [data-style='crystal'] {
@@ -261,8 +247,6 @@
   --bevel-lo: #296b942e;
   --shadow: #1d5f841a;
   --shadow-lg: #17577e40;
-  --scrollbar-thumb: #86bdd5;
-  --scrollbar-thumb-hover: #5b9fbe;
 }
 [data-style='crystal'][data-scheme='dark'] {
   --bg: #091a2c;
@@ -286,8 +270,6 @@
   --bevel-lo: #020c1d8c;
   --shadow: #020b1c70;
   --shadow-lg: #020b1ca3;
-  --scrollbar-thumb: #377293;
-  --scrollbar-thumb-hover: #59a1c6;
 }
 
 [data-style='dunhuang'] {
@@ -312,8 +294,6 @@
   --bevel-lo: #7a491c26;
   --shadow: #79512524;
   --shadow-lg: #79512536;
-  --scrollbar-thumb: #baa077;
-  --scrollbar-thumb-hover: #a38456;
 }
 [data-style='dunhuang'][data-scheme='dark'] {
   --bg: #211d17;
@@ -337,8 +317,6 @@
   --bevel-lo: #100a028c;
   --shadow: #0c080266;
   --shadow-lg: #0c08028c;
-  --scrollbar-thumb: #655337;
-  --scrollbar-thumb-hover: #89724e;
 }
 
 [data-style='rosewood'] {
@@ -363,8 +341,6 @@
   --bevel-lo: #4d1f2529;
   --shadow: #582e3026;
   --shadow-lg: #582e303d;
-  --scrollbar-thumb: #b18b7f;
-  --scrollbar-thumb-hover: #967065;
 }
 [data-style='rosewood'][data-scheme='dark'] {
   --bg: #21151a;
@@ -388,8 +364,6 @@
   --bevel-lo: #10040999;
   --shadow: #10040973;
   --shadow-lg: #100409a3;
-  --scrollbar-thumb: #6d4851;
-  --scrollbar-thumb-hover: #946770;
 }
 
 /* ---------- 材质配方 ----------
@@ -425,7 +399,6 @@
 
 .num-slot,
 .well {
-  --well-background: var(--well);
   --well-texture: linear-gradient(180deg, var(--bevel-lo), transparent 62%);
   --well-shadow: inset 0 1px 2px var(--bevel-lo), inset 0 -1px 0 var(--bevel-hi);
 }
@@ -600,19 +573,17 @@ code {
   gap: 20px;
 }
 /* 牌记：一枚竖长的朱印，单字。 */
+/* 牌记直接取梦幻助手本体的应用图标：墨底白字加一枚小印，等宽方章。 */
 .plaque {
-  display: grid;
-  place-items: center;
+  display: block;
   flex: none;
-  width: 54px;
-  height: 66px;
-  border-radius: var(--r-2);
-  background-color: var(--seal);
-  background-image: var(--stamp-texture);
-  box-shadow: var(--stamp-shadow);
-  color: var(--on-seal);
-  font-size: 30px;
-  line-height: 1;
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow:
+    0 1px 1px var(--bevel-lo),
+    0 5px 12px -3px color-mix(in srgb, var(--ink) 30%, transparent);
 }
 .kicker {
   margin-bottom: 6px;

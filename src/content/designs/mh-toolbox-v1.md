@@ -20,6 +20,7 @@ commit: ee726308f266419f55f9742e553f1ffb41212fd3
 
 ## 还原范围
 
+- 报头牌记沿用梦幻助手本体的应用图标，不重画；页面图标同样取它。
 - 12 枚色卡直接读主题变量，切换主题时同一张卡换的是另一套色，不用写死色值。
 - 三件材质按原配方复现：纸面（三层纹理叠六层影）、凹槽（左壁压暗、右下受光，只内凹不落外影）、印面（灌朱，按下时纹理倒转、影收进纸里）。
 - 控件包含分段胶囊、票面小签、读数框与印钮；读数一律用赭色，优先于朱红。
@@ -30,6 +31,6 @@ commit: ee726308f266419f55f9742e553f1ffb41212fd3
 
 ## 资源说明
 
-页面不含截图，全部模块用 HTML 与主题变量现画。字体为霞鹜文楷 Screen（SIL OFL 1.1，许可见 `licenses/`），按本页实际用字裁成子集，由 `scripts/subset-design-font.mjs` 生成。纸纹来自原应用 `assets/textures/paper-fibre.svg`。
+页面不含截图，全部模块用 HTML 与主题变量现画。报头的牌记直接使用梦幻助手本体的应用图标（`assets/app-icon.png`，缩自原图 `assets/icon/app-icon-1024.png`）。字体为霞鹜文楷 Screen（SIL OFL 1.1，许可见 `licenses/`），按本页实际用字裁成子集，由 `scripts/subset-design-font.mjs` 生成。纸纹来自原应用 `assets/textures/paper-fibre.svg`。
 
 原文案保留，读数取自原应用的示例数据。梦幻助手本体采用 PolyForm Noncommercial 1.0.0，仅限非商业用途。
