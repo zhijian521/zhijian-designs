@@ -165,7 +165,7 @@ const metaOn = { rgb: true, cmyk: false, pms: false };
 const el = (id) => document.getElementById(id);
 
 /* ---------------- 顶部色带 ---------------- */
-el('edge').innerHTML = ALL.map((it) => `<span style="background:${it.hexUp}"></span>`).join('');
+el('skyline').innerHTML = ALL.map((it) => `<span style="background:${it.hexUp}"></span>`).join('');
 
 /* ---------------- 色卡 ---------------- */
 const sortByHue = (items) =>
@@ -191,7 +191,7 @@ function cardMarkup(it) {
   if (metaOn.rgb) lines.push(`RGB ${it.rgb.r} ${it.rgb.g} ${it.rgb.b}`);
   if (metaOn.cmyk) {
     const c = it.cmyk || it.cmykAuto;
-    lines.push(`${it.cmyk ? '' : '≈ '}C${c[0]} M${c[1]} Y${c[2]} K${c[3]}`);
+    lines.push(`${it.cmyk ? '' : '约 '}C${c[0]} M${c[1]} Y${c[2]} K${c[3]}`);
   }
   if (metaOn.pms) lines.push(it.pms ? it.pms : '无 PMS 标注');
 
@@ -250,7 +250,7 @@ function renderTray() {
       <button type="button" class="chip" data-remove="${it.key}" title="移出对比">
         <span class="chip-dot" style="background:${it.hexUp}"></span>
         <span>${it.cn}</span>
-        <span class="chip-x" aria-hidden="true">×</span>
+        <span class="chip-x" aria-hidden="true"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></span>
       </button>`,
           )
           .join('');
@@ -295,7 +295,7 @@ function renderPanel() {
       return `
     <div class="cmp-card">
       <div class="cmp-sw" style="background:${it.hexUp};color:${txt}">
-        <div class="cmp-sample">Aa 汉字</div>
+        <div class="cmp-sample">Aa 色彩</div>
         <div class="cmp-hex">${it.hexUp}</div>
       </div>
       <div class="cmp-info">
@@ -304,8 +304,8 @@ function renderPanel() {
           <span class="badge ${g.cls}">${useWhite ? '白字' : '黑字'} ${g.label}</span>
         </div>
         <div class="row"><span>RGB</span><b>${it.rgb.r} ${it.rgb.g} ${it.rgb.b}</b></div>
-        <div class="row"><span>CMYK${it.cmyk ? '' : ' ≈'}</span><b>${cmyk.join(' ')}</b></div>
-        <div class="row"><span>PMS</span><b>${it.pms ? it.pms.replace('PMS ', '') : '—'}</b></div>
+        <div class="row"><span>CMYK${it.cmyk ? '' : ' 约'}</span><b>${cmyk.join(' ')}</b></div>
+        <div class="row"><span>PMS</span><b>${it.pms ? it.pms.replace('PMS ', '') : '无'}</b></div>
         <div class="row"><span>白字对比</span><b>${fmt(cw)} : 1</b></div>
         <div class="row"><span>黑字对比</span><b>${fmt(cb)} : 1</b></div>
       </div>
@@ -325,7 +325,7 @@ function renderPanel() {
           const cr = contrast(a.rgb, b.rgb);
           const de = deltaE(a.rgb, b.rgb);
           const cls = cr >= 4.5 ? 'c-ok' : cr >= 3 ? 'c-warn' : 'c-bad';
-          return `<td><div class="v ${cls}">${cr.toFixed(1)}</div><div class="d">ΔE ${Math.round(de)}</div></td>`;
+          return `<td><div class="v ${cls}">${cr.toFixed(1)}</div><div class="d">色差 ${Math.round(de)}</div></td>`;
         })
         .join('');
       return `<tr><th>${a.cn}</th>${tds}</tr>`;
@@ -335,12 +335,12 @@ function renderPanel() {
   el('panelInner').innerHTML = `
     <div class="panel-head">
       <b>对比结果 · ${chosen.length} 色</b>
-      <span>对比度按 WCAG 2.1 相对亮度计算 · ΔE 为 CIE76 色差</span>
+      <span>对比度按 WCAG 2.1 相对亮度计算 · 色差为 CIE76 公式</span>
     </div>
     <div class="cmp-grid">${cards}</div>
     <div class="mx-title">
       <b>两两对比矩阵</b>
-      <span>主值为对比度，次值为色差 ΔE</span>
+      <span>主值为对比度，次值为 CIE76 色差</span>
     </div>
     <div class="mx-wrap">
       <table class="mx"><thead>${head}</thead><tbody>${rows}</tbody></table>

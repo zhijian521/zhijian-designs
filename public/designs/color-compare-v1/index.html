@@ -8,10 +8,11 @@
       name="description"
       content="两组共 24 色的并排对照，用 WCAG 2.1 对比度与 CIE76 色差判断哪些颜色真正可区分。"
     />
+    <link rel="stylesheet" href="../../fonts/rounded.css" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="edge" id="edge" aria-hidden="true"></div>
+    <div class="skyline" id="skyline" aria-hidden="true"></div>
 
     <main class="shell">
       <header class="masthead">
@@ -21,7 +22,8 @@
             <span class="kicker-sep" aria-hidden="true">/</span>24 Colors
             <span class="kicker-sep" aria-hidden="true">/</span>2 Plates
           </p>
-          <h1 class="display">色彩档案<span class="display-sub">陶溪川色系 × 品牌专色</span></h1>
+          <h1 class="display">色彩档案</h1>
+          <p class="display-sub">陶溪川色系 · 品牌专色</p>
           <p class="lede">
             两组色板并排放进同一张对照台。把「这两个颜色像不像」的争论，换成两个可以量出来的数：WCAG
             对比度管文字读不读得清，CIE76 色差管两块颜色分不分得开。
@@ -38,7 +40,7 @@
             <b>04</b><span>同屏对比上限<br />slots</span>
           </div>
           <div class="index-row">
-            <b>&Delta;E</b><span>CIE76 色差<br />chroma</span>
+            <b>色差</b><span>CIE76 公式<br />delta E</span>
           </div>
         </aside>
       </header>
@@ -106,14 +108,14 @@
           <h3>对比度与色差</h3>
           <ul>
             <li>
-              对比度按 WCAG 2.1 相对亮度公式计算，<code>&ge; 4.5:1</code> 满足正文 AA，<code
-                >&ge; 7:1</code
+              对比度按 WCAG 2.1 相对亮度公式计算，<code>4.5:1</code> 以上满足正文 AA，<code
+                >7:1</code
               >
-              满足 AAA，<code>3:1</code> 为图形与大字号下限。
+              以上满足 AAA，<code>3:1</code> 为图形与大字号的下限。
             </li>
             <li>
-              ΔE 取 CIE76 色差：<code>&lt; 5</code> 肉眼几乎不可分，<code>5–15</code> 相近，<code
-                >&gt; 15</code
+              色差取 CIE76，<code>小于 5</code> 肉眼几乎不可分，<code>5 至 15</code> 相近，<code
+                >大于 15</code
               >
               明显不同。
             </li>
@@ -124,7 +126,7 @@
           <ul>
             <li>
               第一组仅提供 HEX，RGB 由 HEX 精确换算，CMYK 为
-              <code>RGB → CMYK</code> 的无色彩管理近似值（界面标 &asymp;），不能直接交付印刷。
+              <code>RGB 到 CMYK</code> 的无色彩管理近似值（界面标「约」），不能直接交付印刷。
             </li>
             <li>第二组的 CMYK 与 PMS 为原始标注值；实际印刷请以 Pantone 色卡或打样为准。</li>
           </ul>
