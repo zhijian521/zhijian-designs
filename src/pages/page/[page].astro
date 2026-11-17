@@ -1,0 +1,19 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Collection from '../../components/Collection.astro';
+import { getDesignPages } from '../../lib/designs';
+export async function getStaticPaths() {
+  const { pages, total } = await getDesignPages();
+  return pages.slice(1).map((designs, index) => {
+    const page = index + 2;
+    return {
+      params: { page: String(page) },
+      props: { designs, total, page, nextPage: page < pages.length ? page + 1 : undefined },
+    };
+  });
+}
+---
+
+<SiteLayout title={`设计收藏 · 第 ${Astro.props.page} 页 — 知简设计集`}>
+  <Collection {...Astro.props} />
+</SiteLayout>

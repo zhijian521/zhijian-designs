@@ -1,0 +1,37 @@
+---
+import '../styles/global.css';
+import { withBase } from '../lib/paths';
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = '知简设计集', description = '博客、网站与工具的界面存档。' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f4f1ea" />
+    <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
+    <link
+      rel="preload"
+      href={withBase('fonts/MHRounded.woff2')}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href={withBase('fonts/rounded.css')} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      跳转到正文
+    </a>
+    <main id="main">
+      <slot />
+    </main>
+  </body>
+</html>

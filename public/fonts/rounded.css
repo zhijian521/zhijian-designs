@@ -1,0 +1,11 @@
+@font-face {
+  font-family: 'MH Toolbox Rounded';
+  src: url('./MHRounded.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --font-ui: 'MH Toolbox Rounded', 'Microsoft YaHei', sans-serif;
+}

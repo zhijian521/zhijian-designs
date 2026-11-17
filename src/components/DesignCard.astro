@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../lib/paths';
+interface Props {
+  design: CollectionEntry<'designs'>;
+}
+const { design } = Astro.props;
+const { data, id } = design;
+---
+
+<article class="design-card">
+  <a class="card-cover" href={withBase(`archive/${id}/`)} aria-label={`查看${data.title}`}>
+    <img
+      src={withBase(data.cover)}
+      alt={`${data.title}界面封面`}
+      width="1200"
+      height="800"
+      loading="lazy"
+    />
+    {data.demo && <span class="cover-label">示例</span>}
+  </a>
+  <div class="card-meta">
+    <span>
+      {data.category} · {data.version}
+    </span>
+    <time datetime={data.date}>{data.date.replaceAll('-', '.')}</time>
+  </div>
+  <h2>
+    <a href={withBase(`archive/${id}/`)}>{data.title}</a>
+  </h2>
+  <p>{data.description}</p>
+  <div class="tags">
+    {data.tags.map((tag) => (
+      <span>{tag}</span>
+    ))}
+  </div>
+</article>

@@ -1,0 +1,10 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Collection from '../components/Collection.astro';
+import { getDesignPages } from '../lib/designs';
+const { pages, total } = await getDesignPages();
+---
+
+<SiteLayout>
+  <Collection designs={pages[0] ?? []} total={total} nextPage={pages.length > 1 ? 2 : undefined} />
+</SiteLayout>

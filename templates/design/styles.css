@@ -1,0 +1,23 @@
+/* 作品图片使用 ./assets/；共享圆体由 HTML 中的 ../../fonts/rounded.css 引入。 */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f6f3ec;
+  color: #292d28;
+  font: 15px/1.8 var(--font-ui);
+}
+main {
+  width: min(900px, calc(100% - 48px));
+  margin: 15vh auto;
+}
+.label {
+  font-size: 11px;
+  color: #ad4a35;
+  overflow-wrap: anywhere;
+}
+h1 {
+  font-weight: 400;
+  font-size: clamp(32px, 5vw, 56px);
+}

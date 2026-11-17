@@ -1,0 +1,116 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import DesignCard from './DesignCard.astro';
+import BackLink from './BackLink.astro';
+import { withBase } from '../lib/paths';
+interface Props {
+  designs: CollectionEntry<'designs'>[];
+  total: number;
+  page?: number;
+  nextPage?: number;
+}
+const { designs, total, page = 1, nextPage } = Astro.props;
+---
+
+<section class="collection shell" id="collection" aria-labelledby="collection-title">
+  {page > 1 && <BackLink class="collection-back" />}
+  <div class="collection-heading">
+    <div>
+      <div class="collection-title">
+        <span class="profile-mark" aria-hidden="true">
+          知
+        </span>
+        <h1 id="collection-title">
+          知简 <span class="title-dot">·</span> 设计收藏
+        </h1>
+      </div>
+      <p>博客、网站与工具的界面存档。</p>
+    </div>
+    <span class="design-count">{total} 份设计</span>
+  </div>
+  <div class="design-grid">
+    {designs.map((design) => (
+      <DesignCard design={design} />
+    ))}
+  </div>
+  {total === 0 && <p class="empty-state">暂无设计</p>}
+  {nextPage && (
+    <div class="load-more" data-pagination>
+      <a class="text-link" data-next-page href={withBase(`page/${nextPage}/`)} rel="next">
+        加载更多
+      </a>
+      <p data-load-status role="status"></p>
+    </div>
+  )}
+</section>
+<script>
+  const grid = document.querySelector<HTMLElement>('.design-grid');
+  const pagination = document.querySelector<HTMLElement>('[data-pagination]');
+  const link = pagination?.querySelector<HTMLAnchorElement>('[data-next-page]');
+  const status = pagination?.querySelector<HTMLElement>('[data-load-status]');
+
+  function initializePagination(
+    grid: HTMLElement,
+    pagination: HTMLElement,
+    link: HTMLAnchorElement,
+    status: HTMLElement,
+  ) {
+    let loading = false;
+    let finished = false;
+    const observer =
+      'IntersectionObserver' in window
+        ? new IntersectionObserver(
+            (entries) => {
+              if (entries.some((entry) => entry.isIntersecting)) void loadNextPage();
+            },
+            { rootMargin: '300px' },
+          )
+        : undefined;
+
+    async function loadNextPage() {
+      if (loading || finished) return;
+      loading = true;
+      // 请求期间停止观察；失败后只接受手动重试，避免反复自动请求。
+      observer?.disconnect();
+      link.textContent = '加载中…';
+      link.setAttribute('aria-disabled', 'true');
+      status.textContent = '';
+      grid.setAttribute('aria-busy', 'true');
+      try {
+        const response = await fetch(link.href, { signal: AbortSignal.timeout(15_000) });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const nextPage = new DOMParser().parseFromString(await response.text(), 'text/html');
+        const cards = nextPage.querySelectorAll('.design-grid > .design-card');
+        if (cards.length === 0) throw new Error('Missing design cards');
+        grid.append(...cards);
+        const next = nextPage.querySelector<HTMLAnchorElement>('[data-next-page]');
+        if (next) {
+          link.href = new URL(next.getAttribute('href')!, response.url).href;
+          link.textContent = '加载更多';
+          status.textContent = `已显示 ${grid.childElementCount} 份设计`;
+          observer?.observe(pagination);
+        } else {
+          finished = true;
+          link.hidden = true;
+          status.textContent = '已显示全部设计';
+        }
+      } catch {
+        link.textContent = '重新加载';
+        status.textContent = '加载失败，请点击重试。';
+      } finally {
+        loading = false;
+        link.removeAttribute('aria-disabled');
+        grid.removeAttribute('aria-busy');
+      }
+    }
+
+    link.addEventListener('click', (event) => {
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      void loadNextPage();
+    });
+    observer?.observe(pagination);
+  }
+
+  if (grid && pagination && link && status) initializePagination(grid, pagination, link, status);
+</script>

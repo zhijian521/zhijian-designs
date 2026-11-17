@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="纸间，一个关于阅读、设计和日常的示例博客。" />
+    <title>纸间 · 阅读与日常</title>
+    <link rel="stylesheet" href="../../fonts/rounded.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <header class="blog-header">
+      <a class="wordmark" href="./index.html">纸间<span>PAPER JOURNAL</span></a>
+      <div class="header-right">
+        <span>阅读、记录，与生活。</span
+        ><button id="theme-toggle" type="button" aria-label="切换到深色主题" aria-pressed="false">
+          ◐
+        </button>
+      </div>
+    </header>
+    <main class="journal-layout">
+      <aside class="intro">
+        <span class="small-label">A QUIET CORNER OF THE INTERNET</span>
+        <h1>在字里行间，<br />与日常相逢<span>。</span></h1>
+        <p>我是知简。写一些代码，<br />也记录那些微小而确定的美好。</p>
+        <div class="intro-mark" aria-hidden="true"><span>纸</span><span>间</span></div>
+        <div class="intro-foot"><span class="tiny-dot"></span>保持好奇，缓慢生长。</div>
+      </aside>
+      <section class="entries" aria-labelledby="entries-title">
+        <div class="entries-heading">
+          <h2 id="entries-title">最近的手记</h2>
+          <span>SELECTED WRITINGS / 03</span>
+        </div>
+        <article>
+          <div class="entry-meta">
+            <time datetime="2026-11-16">NOV 16, 2026</time><span>设计随想</span>
+          </div>
+          <h3>
+            <button data-article="0" type="button">给界面留一点呼吸的空间 <span>↗</span></button>
+          </h3>
+          <p>
+            留白从来不是没有内容。它是段落之间的停顿，是让目光轻轻落下的地方，也是我们留给读者的体贴。
+          </p>
+          <div class="entry-bottom"><span>4 分钟阅读</span><span>01</span></div>
+        </article>
+        <article>
+          <div class="entry-meta">
+            <time datetime="2026-11-12">NOV 12, 2026</time><span>日常记录</span>
+          </div>
+          <h3>
+            <button data-article="1" type="button">
+              午后的光，和一本没读完的书 <span>↗</span>
+            </button>
+          </h3>
+          <p>
+            有些下午不需要安排得很满。泡一杯茶，翻几页书，看阳光慢慢挪过书桌，时间就有了自己的形状。
+          </p>
+          <div class="entry-bottom"><span>3 分钟阅读</span><span>02</span></div>
+        </article>
+        <article>
+          <div class="entry-meta">
+            <time datetime="2026-11-08">NOV 08, 2026</time><span>开发笔记</span>
+          </div>
+          <h3>
+            <button data-article="2" type="button">
+              把喜欢的东西，做成自己的样子 <span>↗</span>
+            </button>
+          </h3>
+          <p>
+            从一个很小的念头开始，慢慢把它变成可以使用的东西。那些不被注意的细节，往往最能留下一个人的痕迹。
+          </p>
+          <div class="entry-bottom"><span>5 分钟阅读</span><span>03</span></div>
+        </article>
+      </section>
+    </main>
+    <footer class="blog-footer">
+      <span>© 2026 纸间 · 知简</span><span>文字有温度，日常有回声。</span>
+    </footer>
+    <dialog id="article-dialog" aria-labelledby="article-title">
+      <div class="dialog-header">
+        <span class="small-label">PAPER JOURNAL / READING</span
+        ><button id="close-article" type="button" aria-label="关闭文章">关闭 ×</button>
+      </div>
+      <h2 id="article-title"></h2>
+      <div id="article-body"></div>
+      <p class="reading-note">这是一篇用于展示阅读排版的示例手记。</p>
+    </dialog>
+  </body>
+</html>
