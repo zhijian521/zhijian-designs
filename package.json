@@ -9,7 +9,10 @@
   "scripts": {
     "dev": "astro dev",
     "check": "astro check",
-    "build": "npm run check && astro build",
+    "subset:font": "node scripts/subset-font.mjs",
+    "build": "npm run subset:font && npm run check && astro build",
+    "check:links": "node scripts/check-links.mjs",
+    "verify": "npm run format:check && npm run build && npm run check:links",
     "preview": "astro preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -17,12 +20,14 @@
     "new:design": "node scripts/new-design.mjs"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.5",
     "astro": "^7.4.12"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "prettier": "^3.10.1",
     "prettier-plugin-astro": "^1.1.2",
+    "subset-font": "^2.9.0",
     "typescript": "^5.9.3"
   }
 }
