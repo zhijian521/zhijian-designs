@@ -17,12 +17,14 @@ const { designs, total, page = 1, nextPage } = Astro.props;
   <div class="collection-heading">
     <div>
       <div class="collection-title">
-        <span class="profile-mark" aria-hidden="true">
-          知
-        </span>
-        <h1 id="collection-title">
-          知简 <span class="title-dot">·</span> 设计收藏
-        </h1>
+        <img
+          class="profile-mark"
+          src={withBase('brand/logo.svg')}
+          alt="知简"
+          width="80"
+          height="44"
+        />
+        <h1 id="collection-title">设计收藏</h1>
       </div>
       <p>博客、网站与工具的界面存档。</p>
     </div>
