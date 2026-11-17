@@ -1,9 +1,10 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { withBase } from '../lib/paths';
+import { siteName } from '../lib/site';
 ---
 
-<SiteLayout title="页面未找到 — 知简设计集" path={withBase()}>
+<SiteLayout title={`页面未找到 — ${siteName}`} path={withBase()} noindex>
   <section class="shell not-found">
     <h1>页面未找到</h1>
     <a class="text-link" href={withBase()}>

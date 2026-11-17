@@ -56,7 +56,8 @@ src/pages/             首页、详情、404、robots
 src/components/        卡片与预览容器
 src/styles/            展示站样式
 public/designs/<id>/   独立作品页面与资源
-public/brand/          书法标识
+public/brand/          书法标识与分享卡
+assets/                不进构建的源资源（全量字体、备用标识）
 templates/design/      新作品模板
 scripts/               新增脚本、字体子集、链接校验
 ```
@@ -65,7 +66,7 @@ scripts/               新增脚本、字体子集、链接校验
 
 ## 字体
 
-展示站与模板使用资源圆体子集 `MHRounded.woff2`（SIL OFL 1.1，许可见 `public/fonts/`），经 `--font-ui` 应用。`npm run subset:font` 扫描 `src/` 与 `templates/` 的用字，从 `assets/fonts/MHRounded.full.woff2` 裁出子集；改文案后重跑即可，缺字回退系统字体。真实案例保留原设计字体，随作品保存。
+展示站与模板使用资源圆体子集 `MHRounded.woff2`（SIL OFL 1.1，许可见 `public/fonts/`），经 `--font-ui` 应用。`npm run subset:font` 扫描 `src/`、`templates/` 与显式引用 `rounded.css` 的作品页，从 `assets/fonts/MHRounded.full.woff2` 裁出子集；改文案后重跑即可，缺字回退系统字体。真实案例保留原设计字体，随作品保存。
 
 ## 部署
 
@@ -78,4 +79,4 @@ npm run build
 npm run check:links -- /zhijian-designs/
 ```
 
-存档作品（`/designs/`）不进入索引，各自保留独立页面。
+存档作品（`/designs/`）不进入索引，各自保留独立页面。分享卡 `public/brand/og.png` 是静态图，改动站点标识或描述后需重新生成。

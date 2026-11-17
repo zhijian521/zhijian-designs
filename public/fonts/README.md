@@ -9,4 +9,4 @@
 
 展示站与新建作品共用 `rounded.css`。子集不含的字符回退到系统字体。
 
-`MHRounded.woff2` 是构建产物，由 `npm run subset:font` 从 `assets/fonts/MHRounded.full.woff2` 按站内实际用字重新生成（当前约 52KB / 1076KB）。不要直接手改，改文案后重跑脚本即可。
+`MHRounded.woff2` 是构建产物，由 `npm run subset:font` 从 `assets/fonts/MHRounded.full.woff2` 按站内实际用字重新生成（约 1076KB → 90KB / 670 字）。扫描范围是 `src/`、`templates/` 与显式引用 `rounded.css` 的作品页。不要直接手改，改文案后重跑脚本即可。

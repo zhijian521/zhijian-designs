@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import DesignCard from './DesignCard.astro';
 import BackLink from './BackLink.astro';
 import { withBase } from '../lib/paths';
+import { siteDescription } from '../lib/site';
 interface Props {
   designs: CollectionEntry<'designs'>[];
   total: number;
@@ -26,7 +27,7 @@ const { designs, total, page = 1, nextPage } = Astro.props;
         />
         <h1 id="collection-title">设计收藏</h1>
       </div>
-      <p>博客、网站与工具的界面存档。</p>
+      <p>{siteDescription}</p>
     </div>
     <span class="design-count">{total} 份设计</span>
   </div>

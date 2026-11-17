@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PreviewFrame from '../../components/PreviewFrame.astro';
 import BackLink from '../../components/BackLink.astro';
-import { absoluteUrl, withBase } from '../../lib/site';
+import { absoluteUrl, siteName, withBase } from '../../lib/site';
 export async function getStaticPaths() {
   return (await getCollection('designs')).map((design) => ({
     params: { id: design.id },
@@ -16,7 +16,7 @@ const { Content } = await render(design);
 ---
 
 <SiteLayout
-  title={`${data.title} — 知简设计集`}
+  title={`${data.title} — ${siteName}`}
   description={data.description}
   image={data.cover}
   structuredData={{

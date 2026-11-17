@@ -3,6 +3,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import Collection from '../../components/Collection.astro';
 import { getDesignPages } from '../../lib/designs';
 import { withBase } from '../../lib/paths';
+import { siteName } from '../../lib/site';
 export async function getStaticPaths() {
   const { pages, total } = await getDesignPages();
   return pages.slice(1).map((designs, index) => {
@@ -16,7 +17,7 @@ export async function getStaticPaths() {
 ---
 
 <SiteLayout
-  title={`设计收藏 · 第 ${Astro.props.page} 页 — 知简设计集`}
+  title={`设计收藏 · 第 ${Astro.props.page} 页 — ${siteName}`}
   path={withBase(`page/${Astro.props.page}/`)}
 >
   <Collection {...Astro.props} />

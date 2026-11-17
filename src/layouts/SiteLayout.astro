@@ -6,8 +6,10 @@ interface Props {
   description?: string;
   /** 当前页面路径，用于 canonical 与分享链接；缺省取 Astro.url.pathname。 */
   path?: string;
-  /** 分享卡片图，缺省使用站点标识。 */
+  /** 分享卡片图，缺省使用 1200x630 的站点分享卡。 */
   image?: string;
+  /** 不需要被索引的页面（如 404）。 */
+  noindex?: boolean;
   /** 详情页额外注入的结构化数据。 */
   structuredData?: Record<string, unknown>;
 }
@@ -15,7 +17,8 @@ const {
   title = siteName,
   description = siteDescription,
   path = Astro.url.pathname,
-  image = withBase('brand/logo-paper.png'),
+  image = withBase('brand/og.png'),
+  noindex = false,
   structuredData,
 } = Astro.props;
 const canonical = new URL(path, absoluteUrl()).href;
@@ -40,7 +43,7 @@ const jsonLd = structuredData
       sizes="16x16 24x24 32x32 48x48 64x64 128x128 256x256"
     />
     <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
-    <link rel="apple-touch-icon" href={withBase('favicon.ico')} />
+    <link rel="apple-touch-icon" sizes="180x180" href={withBase('apple-touch-icon.png')} />
     <link
       rel="preload"
       href={withBase('fonts/MHRounded.woff2')}
@@ -61,6 +64,7 @@ const jsonLd = structuredData
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    {noindex && <meta name="robots" content="noindex" />}
     <title>{title}</title>
     {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
   </head>
