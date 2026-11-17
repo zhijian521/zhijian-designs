@@ -7,4 +7,6 @@
 - 当前文件为梦幻助手生成的常用字子集，内部名称 `MH Toolbox Rounded`；保留原文件与字体元数据，未再次修改。
 - 许可：随附 `ResourceHanRounded-OFL.txt`（SIL OFL 1.1）。
 
-展示站、示例和新建作品共用 `rounded.css`。子集不含的字符回退到系统字体。
+展示站与新建作品共用 `rounded.css`。子集不含的字符回退到系统字体。
+
+`MHRounded.woff2` 是构建产物，由 `npm run subset:font` 从 `assets/fonts/MHRounded.full.woff2` 按站内实际用字重新生成（当前约 52KB / 1076KB）。不要直接手改，改文案后重跑脚本即可。
