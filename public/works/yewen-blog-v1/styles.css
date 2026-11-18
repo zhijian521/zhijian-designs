@@ -1,8 +1,9 @@
 /*============================================================================
   耶温博客 · 设计语言还原页
 
-  纸白、40px 网格、一根发丝线与 390 字重。原站只有九个颜色值、七档字号、
-  六档间距，本页照抄这套刻度，把它摊开成可对照的样子。
+  纸白、40px 网格、一根发丝线与 390 字重。原站的令牌只有七个颜色值、七档字号、
+  六档间距，本页照抄这套刻度，只为一处对比度补了 --ink-300（#737373）这一枚，
+  其余原值不动。
   颜色一律走令牌，组件里不出现十六进制。
 ============================================================================*/
 
@@ -18,7 +19,6 @@
   --ink-300: #737373;
   --ink-200: #999999;
   --line: #e5e5e5;
-  --line-soft: #efefef;
 
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -53,7 +53,6 @@
 
   --hair: 1px;
   --grid-line: rgba(0, 0, 0, 0.01);
-  --grid-line-strong: rgba(0, 0, 0, 0.045);
   --grid-line-fixed: rgba(0, 0, 0, 0.038);
   --grid-size: 40px;
 
@@ -426,8 +425,9 @@ code {
   border-radius: var(--radius-control);
   cursor: pointer;
   font-family: inherit;
-  font-size: var(--fs-xs);
-  letter-spacing: 0.06em;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   color: var(--ink-500);
   text-align: left;
   transition:
@@ -750,6 +750,11 @@ main {
 
 .type-sample--xl {
   font-size: var(--fs-xl);
+  line-height: 1.5;
+}
+
+.type-sample--lg {
+  font-size: var(--fs-lg);
   line-height: 1.5;
 }
 
@@ -1125,13 +1130,10 @@ main {
 }
 
 .fab-demo {
-  margin-inline: auto;
-}
-
-.fab-demo {
   position: relative;
   width: 200px;
   height: 120px;
+  margin-inline: auto;
 }
 
 .fab-main,
@@ -1241,9 +1243,10 @@ main {
 .mock-home-grid {
   position: absolute;
   inset: 0;
+  /* 示意恒定按原站 40px 方格画，不跟控制坞的网格开关联动 */
   background-image:
-    linear-gradient(var(--grid-line-strong) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line-strong) 1px, transparent 1px);
+    linear-gradient(var(--grid-line-fixed) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-fixed) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -1290,7 +1293,7 @@ main {
   font-size: var(--fs-xs);
   color: var(--ink-700);
   padding-block: 4px;
-  border-bottom: var(--hair) solid var(--line-soft);
+  border-bottom: var(--hair) solid var(--line);
 }
 
 .mock-latest-row em {

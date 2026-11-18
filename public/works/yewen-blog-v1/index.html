@@ -27,17 +27,19 @@
         <p class="lede">
           SimpleBlog 是耶温的个人博客。界面的底子只有纸白与细线：页底 <code>#fafafa</code>， 40px
           一格的低对比网格铺满整屏，正文用系统无衬线的 390 字重，层级全部靠字号、字距与留白拉开。
-          全站的灰阶只有七档，强调用的就是最深的那枚墨。
+          原站的灰阶令牌只有七个值，主界面只用这七档，强调用的就是最深的那枚墨。
           下面把它的色、字、底纹与控件拆开摆出来，供对照，不是另起的一套视觉。
         </p>
         <ul class="axioms">
           <li>
             <b>一档灰，一枚墨</b>
-            <span>七个颜色值全是灰阶，强调色不引入第二个色相。</span>
+            <span
+              >原站七个令牌值全是灰阶，主界面不引入第二个色相；只有错误页与雪片层两处例外。</span
+            >
           </li>
           <li>
             <b>层级靠字号与留白</b>
-            <span>字重几乎只有 390 与 400，正文里最多用 500 标一处重点，不靠色块或阴影分层。</span>
+            <span>正文与控件写 390、标题写 400，强调与表头才用 500，不靠色块或阴影分层。</span>
           </li>
           <li>
             <b>结构是一根发丝线</b>
@@ -129,15 +131,16 @@
             原站的颜色变量只有七个值，全部集中在 <code>styles/variables.css</code>。它们不构成色板，
             而是一条从纸白到墨黑的直线：越往右对比越强，越往左越像纸。强调色没有另开色相，
             取的是这条线上最深的那一枚；连分线用的 <code>#e5e5e5</code> 也在这条线上。
+            例外只有两处，都不在令牌里：错误边界自带一组紫蓝，雪片层自带五种浅蓝，各自写死在组件内，主界面不出现。
           </p>
           <div class="ramp" aria-hidden="true">
-            <span class="ramp-seg" style="--chip: #ffffff"></span>
-            <span class="ramp-seg" style="--chip: #fafafa"></span>
-            <span class="ramp-seg" style="--chip: #e5e5e5"></span>
-            <span class="ramp-seg" style="--chip: #999999"></span>
-            <span class="ramp-seg" style="--chip: #666666"></span>
-            <span class="ramp-seg" style="--chip: #3a3a3a"></span>
-            <span class="ramp-seg" style="--chip: #1a1a1a"></span>
+            <span class="ramp-seg" style="--chip: var(--paper-0)"></span>
+            <span class="ramp-seg" style="--chip: var(--paper-50)"></span>
+            <span class="ramp-seg" style="--chip: var(--line)"></span>
+            <span class="ramp-seg" style="--chip: var(--ink-200)"></span>
+            <span class="ramp-seg" style="--chip: var(--ink-500)"></span>
+            <span class="ramp-seg" style="--chip: var(--ink-700)"></span>
+            <span class="ramp-seg" style="--chip: var(--ink-900)"></span>
           </div>
           <div class="ramp-scale" aria-hidden="true">
             <span>纸 · 弱</span>
@@ -145,49 +148,49 @@
           </div>
           <ol class="ramp-list">
             <li>
-              <span class="ramp-dot" style="--chip: #ffffff"></span>
+              <span class="ramp-dot" style="--chip: var(--paper-0)"></span>
               <span class="ramp-name">纸白</span>
               <code class="ramp-hex">#FFFFFF</code>
               <span class="ramp-role">卡面、浮层、抽屉底</span>
               <span class="ramp-read"><b>1.05</b> 对页底</span>
             </li>
             <li>
-              <span class="ramp-dot" style="--chip: #fafafa"></span>
+              <span class="ramp-dot" style="--chip: var(--paper-50)"></span>
               <span class="ramp-name">页底</span>
               <code class="ramp-hex">#FAFAFA</code>
               <span class="ramp-role">整页底色，网格画在它上面</span>
               <span class="ramp-read"><b>1.00</b> 基准</span>
             </li>
             <li>
-              <span class="ramp-dot" style="--chip: #e5e5e5"></span>
+              <span class="ramp-dot" style="--chip: var(--line)"></span>
               <span class="ramp-name">分线</span>
               <code class="ramp-hex">#E5E5E5</code>
               <span class="ramp-role">1px 分隔、空闲格与滚动条</span>
               <span class="ramp-read"><b>1.2</b> 仅作线</span>
             </li>
             <li>
-              <span class="ramp-dot" style="--chip: #999999"></span>
+              <span class="ramp-dot" style="--chip: var(--ink-200)"></span>
               <span class="ramp-name">标注</span>
               <code class="ramp-hex">#999999</code>
               <span class="ramp-role">日期与计数，原站取这枚</span>
               <span class="ramp-read"><b>2.7</b> 不足</span>
             </li>
             <li>
-              <span class="ramp-dot" style="--chip: #666666"></span>
+              <span class="ramp-dot" style="--chip: var(--ink-500)"></span>
               <span class="ramp-name">次要</span>
               <code class="ramp-hex">#666666</code>
               <span class="ramp-role">说明、副标题与图标</span>
               <span class="ramp-read"><b>5.5</b> AA</span>
             </li>
             <li>
-              <span class="ramp-dot" style="--chip: #3a3a3a"></span>
+              <span class="ramp-dot" style="--chip: var(--ink-700)"></span>
               <span class="ramp-name">正文</span>
               <code class="ramp-hex">#3A3A3A</code>
               <span class="ramp-role">标题、正文与可点文字</span>
               <span class="ramp-read"><b>10.9</b> AAA</span>
             </li>
             <li>
-              <span class="ramp-dot" style="--chip: #1a1a1a"></span>
+              <span class="ramp-dot" style="--chip: var(--ink-900)"></span>
               <span class="ramp-name">强调</span>
               <code class="ramp-hex">#1A1A1A</code>
               <span class="ramp-role">链接、当前项与悬停底线</span>
@@ -210,11 +213,14 @@
             </div>
           </header>
           <p class="block-lede">
-            字号从 0.75rem 到 1.875rem 一共七档，行高 1.6 到 1.8，正文段落按 1.8 排。
-            真正让这套界面安静下来的是字重：正文与控件一律写 <code>390</code>，标题才用
-            <code>400</code>，
-            两档之差几乎看不出来，也再没有第三档用来强调。这需要可变字体或支持任意字重的系统字体才生效，
-            Windows 上的雅黑与 Segoe UI 会把它吸附到 400，所以本页也如实写 390——
+            字号从 0.75rem 到 1.875rem 一共七档，其中
+            <code>lg</code>（1.125rem）只服务正文里的小标题 <code>h4</code>。行高从 1.4 到 1.8：body
+            是 1.6，正文段落按 1.8 排，标题用 1.4。 真正让这套界面安静下来的是字重：正文与控件写
+            <code>390</code>，标题才用
+            <code>400</code>，两档之差几乎看不出来；全站只有正文强调与表头用 <code>500</code>，
+            <code>200</code> 与
+            <code>600</code> 只出现在错误页。这需要可变字体或支持任意字重的系统字体才生效， Windows
+            上的雅黑与 Segoe UI 会把它吸附到 400，所以本页也如实写 390——
             支持的环境细一分，不支持的环境退回常规，不额外补粗体。层级因此只能靠字号与留白拉开。
           </p>
           <div class="type-list">
@@ -237,6 +243,13 @@
               <div class="type-spec">
                 <b>--font-size-xl</b><span>1.25rem / 20px</span
                 ><span class="type-use">文章 h3</span>
+              </div>
+            </div>
+            <div class="type-row">
+              <p class="type-sample type-sample--lg">在做的事 · 日常 · 联系我</p>
+              <div class="type-spec">
+                <b>--font-size-lg</b><span>1.125rem / 18px</span>
+                <span class="type-use">正文小标题 h4，全站只此一处</span>
               </div>
             </div>
             <div class="type-row">
@@ -361,7 +374,7 @@
                 </div>
               </div>
             </div>
-            <p class="ctrl-tag">分组标题 12px 大写字距 0.5px，条目前置 2px 墨线与 2px 位移</p>
+            <p class="ctrl-tag">分组标题 14px、字距 0.5px、可折叠；条目前置 2px 墨线与 2px 位移</p>
           </div>
 
           <h3 class="sub-head">搜索输入与标签</h3>

@@ -18,13 +18,11 @@
   function applyGrid(value) {
     if (value === 'off') {
       root.style.setProperty('--grid-line', 'transparent');
-      root.style.setProperty('--grid-line-strong', 'transparent');
       root.style.setProperty('--grid-size', '40px');
     } else {
       var size = value + 'px';
       root.style.setProperty('--grid-size', size);
       root.style.setProperty('--grid-line', 'rgba(0, 0, 0, 0.01)');
-      root.style.setProperty('--grid-line-strong', 'rgba(0, 0, 0, 0.045)');
     }
     for (var i = 0; i < gridButtons.length; i += 1) {
       var on = gridButtons[i].getAttribute('data-grid') === value;
