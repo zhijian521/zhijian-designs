@@ -158,7 +158,6 @@
   .detail-header .lede {
     margin-top: 10px;
     letter-spacing: 0.04em;
-    max-width: 38em;
   }
 
   /* 文武线：全页唯一的重线，页头收口用。 */
@@ -532,12 +531,12 @@
     overflow: hidden;
   }
 
-  /*== 正文：窄栏、宽行距、小节带朱红序号 ==*/
+  /*== 正文：与信息栏、预览框同宽，行距放开，小节带朱红序号 ==*/
   .detail-notes {
-    max-width: 38em;
     margin-top: 40px;
   }
   .prose {
+    font-size: 13.5px;
     color: var(--text);
   }
   .prose h2 {
@@ -596,7 +595,7 @@
     color: var(--ink);
   }
   .prose p {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     line-height: 2.05;
   }
   .prose ul,
