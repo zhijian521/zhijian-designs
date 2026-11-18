@@ -30,9 +30,9 @@ test('creates a complete design independent of the current working directory', a
   assert.equal(result.status, 0, result.stderr);
   const metadata = await readFile(join(directory, 'src/content/designs/my-blog-v2.md'), 'utf8');
   assert.match(metadata, /version: v2/);
-  assert.match(metadata, /preview: designs\/my-blog-v2\/index.html/);
+  assert.match(metadata, /preview: works\/my-blog-v2\/index.html/);
   for (const file of ['index.html', 'styles.css', 'assets/cover.svg']) {
-    const content = await readFile(join(directory, 'public/designs/my-blog-v2', file), 'utf8');
+    const content = await readFile(join(directory, 'public/works/my-blog-v2', file), 'utf8');
     assert.ok(content.length > 0);
     assert.ok(!content.includes('__DESIGN_ID__'));
   }
@@ -41,7 +41,7 @@ test('creates a complete design independent of the current working directory', a
 test('refuses to overwrite archived metadata or design files', async (t) => {
   const { directory, run } = await createFixture(t);
   assert.equal(run('my-blog-v1').status, 0);
-  const paths = ['src/content/designs/my-blog-v1.md', 'public/designs/my-blog-v1/index.html'];
+  const paths = ['src/content/designs/my-blog-v1.md', 'public/works/my-blog-v1/index.html'];
   const originals = await Promise.all(paths.map((path) => readFile(join(directory, path), 'utf8')));
   assert.equal(run('my-blog-v1').status, 1);
   const actual = await Promise.all(paths.map((path) => readFile(join(directory, path), 'utf8')));

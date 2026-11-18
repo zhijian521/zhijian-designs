@@ -8,9 +8,9 @@ const root = resolve(import.meta.dirname, '..');
 const targets = [
   {
     // 梦幻助手设计语言页用霞鹜文楷，站点圆体不参与。
-    design: 'public/designs/mh-toolbox-v1',
+    design: 'public/works/mh-toolbox-v1',
     source: 'assets/fonts/LXGWWenKaiScreen.woff2',
-    target: 'public/designs/mh-toolbox-v1/assets/wenkai.woff2',
+    target: 'public/works/mh-toolbox-v1/assets/wenkai.woff2',
     // 该字体已含 GB2312 全集，只按页面实际用字裁，避免整包 1.75MB 进 dist。
     baseline: '',
   },

@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import deploy from '../deploy.config.mjs';
 
-// 校验 dist 内所有内部链接与资源引用都能落到真实文件，可选传入部署子目录。
+// 校验 dist 内所有内部链接与资源引用都能落到真实文件。
+// 部署前缀默认取 deploy.config.mjs（与构建同源），也可用第一个参数临时覆盖。
 const root = resolve('dist');
-const base = (process.argv[2] || '').replace(/\/$/, '');
+const base = (process.argv[2] ?? deploy.base).replace(/\/$/, '');
 const origin = 'https://archive.test';
 const attribute = /(?:href|src)="([^"]+)"/g;
 const cssUrl = /url\(['"]?([^)'"\s]+)['"]?\)/g;

@@ -5,8 +5,8 @@ category: 工具
 tags: [浅色, 东方, 双主题, 材质]
 date: '2026-11-17'
 version: v1
-cover: designs/mh-toolbox-v1/assets/cover.webp
-preview: designs/mh-toolbox-v1/index.html
+cover: works/mh-toolbox-v1/assets/cover.webp
+preview: works/mh-toolbox-v1/index.html
 colors: ['#F8F3E6', '#292520', '#A8322B']
 source: https://github.com/zhijian521/mh-toolbox-rs
 commit: ee726308f266419f55f9742e553f1ffb41212fd3

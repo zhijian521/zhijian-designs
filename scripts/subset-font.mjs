@@ -11,7 +11,7 @@ const scanRoots = ['src', 'templates'];
 
 // 作品页也会用到共享圆体，但只有显式引用了 rounded.css 的那几份才扫；
 // 其余作品用自己的字族，不该把它们的文案也算进子集。
-const designRoot = 'public/designs';
+const designRoot = 'public/works';
 for (const entry of await readdir(join(root, designRoot), { withFileTypes: true }).catch(
   () => [],
 )) {

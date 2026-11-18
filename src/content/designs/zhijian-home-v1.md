@@ -5,8 +5,8 @@ category: 博客
 tags: [浅色, 东方, 双主题, 衬线]
 date: '2026-11-17'
 version: v1
-cover: designs/zhijian-home-v1/assets/cover.webp
-preview: designs/zhijian-home-v1/index.html
+cover: works/zhijian-home-v1/assets/cover.webp
+preview: works/zhijian-home-v1/index.html
 colors: ['#FDFBF6', '#211D18', '#A3262A']
 source: https://github.com/zhijian521/zhijian-home
 commit: 288218f8bb9b1666d4c86237df37dcd7df605eef

@@ -12,7 +12,7 @@ if (process.argv.length !== 3 || !id || !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-v[1-9]\
 }
 
 const contentPath = join(root, 'src/content/designs', `${id}.md`);
-const designPath = join(root, 'public/designs', id);
+const designPath = join(root, 'public/works', id);
 for (const target of [contentPath, designPath]) {
   try {
     await access(target);
@@ -36,8 +36,8 @@ category: 网站
 tags: [浅色]
 date: '${date}'
 version: ${version}
-cover: designs/${id}/assets/cover.svg
-preview: designs/${id}/index.html
+cover: works/${id}/assets/cover.svg
+preview: works/${id}/index.html
 colors: ['#F6F3EC', '#292D28', '#AD4A35']
 # source: https://github.com/your-name/your-project
 # commit: 原始提交的完整哈希
@@ -66,5 +66,5 @@ for (const name of ['index.html', 'styles.css', 'assets/cover.svg']) {
 await mkdir(dirname(contentPath), { recursive: true });
 await writeFile(contentPath, metadata, { flag: 'wx' });
 console.log(
-  `已创建 ${id}\n作品说明：src/content/designs/${id}.md\n独立页面：public/designs/${id}/index.html\n下一步：替换内容与封面，运行 npm run dev 查看。`,
+  `已创建 ${id}\n作品说明：src/content/designs/${id}.md\n独立页面：public/works/${id}/index.html\n下一步：替换内容与封面，运行 npm run dev 查看。`,
 );

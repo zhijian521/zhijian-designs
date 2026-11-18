@@ -5,8 +5,8 @@ category: 工具
 tags: [浅色, 色卡, 数据可视化]
 date: '2026-11-17'
 version: v1
-cover: designs/color-compare-v1/assets/cover.webp
-preview: designs/color-compare-v1/index.html
+cover: works/color-compare-v1/assets/cover.webp
+preview: works/color-compare-v1/index.html
 colors: ['#F6F4F0', '#141414', '#823725']
 ---
 

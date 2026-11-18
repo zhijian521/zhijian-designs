@@ -5,8 +5,8 @@ import { glob } from 'astro/loaders';
 const localPath = z
   .string()
   .regex(
-    /^designs\/[a-z0-9-]+\/[a-zA-Z0-9/_-]+\.(html|svg|png|jpe?g|webp)$/,
-    '请使用 designs/<id>/ 下的相对文件路径',
+    /^works\/[a-z0-9-]+\/[a-zA-Z0-9/_-]+\.(html|svg|png|jpe?g|webp)$/,
+    '请使用 works/<id>/ 下的相对文件路径',
   );
 
 const designs = defineCollection({
