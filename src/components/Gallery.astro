@@ -15,12 +15,12 @@ interface Props {
 const { designs, total, nextPage } = Astro.props;
 
 // 环形节距与半径都跟着藏品数算：固定 72° 只对 5 件成立。
-// 半径取「相邻画框刚好不碰」的 1.98 倍，再夹在 1.36–1.9 之间——
-// 上界是为了让整环仍留在后墙（Z = -1350px）里面。
+// 半径按「相邻画框刚好不碰」的值再收一点（1.16 倍），让正前方那帧明显最大、
+// 左右各露出邻框边角，观感是站在屋里转圈而不是看一排远处的画。
 const count = Math.max(designs.length, 1);
 const step = 360 / count;
 const touch = 0.5 / Math.tan(Math.PI / count);
-const radius = Math.min(1.9, Math.max(1.36, touch * 1.98));
+const radius = Math.min(1.05, Math.max(0.72, touch * 1.16));
 
 // 卷次与档案页同源，画廊里只用来标序号，不参与环形排布。
 const DIGITS = ['', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
@@ -270,7 +270,12 @@ const items = designs.map((design, index) => ({
           syncHud();
         }
         frames.forEach((frame, i) => {
-          frame.dataset.active = i === active ? 'true' : 'false';
+          const isActive = i === active;
+          frame.dataset.active = isActive ? 'true' : 'false';
+          // 环收得很紧，超过 110° 的帧已经转到镜头背后，投影会糊成一块空白板，直接隐去。
+          let delta = Math.abs(i - active) * step;
+          delta = Math.min(delta, 360 - delta);
+          frame.dataset.far = !isActive && delta > 110 ? 'true' : 'false';
         });
         dots.forEach((dot, i) => {
           dot.setAttribute('aria-current', i === active ? 'true' : 'false');
@@ -352,14 +357,28 @@ const items = designs.map((design, index) => ({
       let startX = 0;
       let startAngle = 0;
       let moved = 0;
+      let downTarget: HTMLElement | null = null;
+
+      // 3D 渲染上下文里 elementFromPoint 只会返回舞台容器（Chrome 的命中测试会
+      // 跳过 preserve-3d 里的变换子树），elementsFromPoint 才拿得到真实堆栈。
+      const frameAtPoint = (x: number, y: number): HTMLElement | null => {
+        for (const node of document.elementsFromPoint(x, y)) {
+          const frame = (node as HTMLElement).closest<HTMLElement>('.gal-frame');
+          if (frame) return frame;
+        }
+        return null;
+      };
 
       const onDown = (event: PointerEvent) => {
         if (event.button !== 0) return;
-        if ((event.target as HTMLElement).closest('.gal-aside, .gal-tools, .gal-actions')) return;
+        const target = event.target as HTMLElement;
+        if (target.closest('.gal-aside, .gal-tools, .gal-actions')) return;
         dragging = true;
         moved = 0;
         startX = event.clientX;
         startAngle = angle;
+        // 指针被捕获后 pointerup 的 target 会变成 root，所以要在这里先记住按下的元素。
+        downTarget = target;
         root.classList.add('is-dragging');
         // 有些环境（合成分发、部分触屏）不允许捕获，失败不能打断后续逻辑。
         try {
@@ -392,9 +411,12 @@ const items = designs.map((design, index) => ({
           return;
         }
         // 没拖动就是点击：先转到被点的那一帧，再点一次才走近。
-        const frame = (event.target as HTMLElement).closest<HTMLElement>('.gal-frame');
-        if (!frame) return;
-        const index = Number(frame.dataset.i);
+        const hit =
+          downTarget?.closest<HTMLElement>('.gal-frame') ??
+          frameAtPoint(event.clientX, event.clientY);
+        downTarget = null;
+        if (!hit) return;
+        const index = Number(hit.dataset.i);
         if (mode === 'focus') {
           if (index === active) flip();
           else snapTo(index);
@@ -407,7 +429,11 @@ const items = designs.map((design, index) => ({
       root.addEventListener('pointerdown', onDown);
       root.addEventListener('pointermove', onMove);
       root.addEventListener('pointerup', onUp);
-      root.addEventListener('pointercancel', onUp);
+      root.addEventListener('pointercancel', () => {
+        dragging = false;
+        downTarget = null;
+        root.classList.remove('is-dragging');
+      });
 
       // 画框里的封面链接在展厅里只用来「走近」，没有脚本时才真的跳转。
       root.addEventListener('click', (event) => {
