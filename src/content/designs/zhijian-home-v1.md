@@ -8,13 +8,13 @@ version: v1
 cover: works/zhijian-home-v1/assets/cover.webp
 preview: works/zhijian-home-v1/index.html
 colors: ['#FDFBF6', '#211D18', '#A3262A']
-source: https://github.com/zhijian521/zhijian-home
+source: https://github.com/zhijian521/zhijian
 commit: 288218f8bb9b1666d4c86237df37dcd7df605eef
 ---
 
 ## 设计思想
 
-[知简](https://github.com/zhijian521/zhijian-home) 是个人博客加导航书签的站点，界面的底子只有三样：朱砂、宣纸、墨。三条约定把它和常见的「水墨风」区分开——**圆角一律归零**，所有容器都是直角；**结构靠线不靠阴影**，1px 发丝线分区块、2px 朱线标当前项；**朱砂只管三种事**，当前项、分类标签、主按钮，别处一律退回墨色。
+[知简](https://github.com/zhijian521/zhijian) 是个人博客加导航书签的站点，界面的底子只有三样：朱砂、宣纸、墨。三条约定把它和常见的「水墨风」区分开——**圆角一律归零**，所有容器都是直角；**结构靠线不靠阴影**，1px 发丝线分区块、2px 朱线标当前项；**朱砂只管三种事**，当前项、分类标签、主按钮，别处一律退回墨色。
 
 标题用衬线（Noto Serif SC 一脉），正文与控件用系统无衬线，代码用等宽。这个搭配让大标题有书页的分量，而界面本身保持安静。
 

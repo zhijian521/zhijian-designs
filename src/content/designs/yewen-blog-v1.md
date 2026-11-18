@@ -8,13 +8,13 @@ version: v1
 cover: works/yewen-blog-v1/assets/cover.webp
 preview: works/yewen-blog-v1/index.html
 colors: ['#FAFAFA', '#3A3A3A', '#1A1A1A']
-source: https://github.com/zhijian521/SimpleBlog
+source: https://github.com/zhijian521/simple-blog
 commit: fa1f9b6d2de5415bfe49624e3e2e0ff583522541
 ---
 
 ## 设计思想
 
-[耶温博客](https://github.com/zhijian521/SimpleBlog) 是一个 React + Markdown 的个人博客。它的界面几乎不「设计」：页底是 `#fafafa`，上面铺一层 1% 黑的 40px 方格纸，正文用系统无衬线、字重 390，全站只有一根 1px 的 `#e5e5e5` 分线。
+[耶温博客](https://github.com/zhijian521/simple-blog) 是一个 React + Markdown 的个人博客。它的界面几乎不「设计」：页底是 `#fafafa`，上面铺一层 1% 黑的 40px 方格纸，正文用系统无衬线、字重 390，全站只有一根 1px 的 `#e5e5e5` 分线。
 
 三条约定撑起这套极简：
 
