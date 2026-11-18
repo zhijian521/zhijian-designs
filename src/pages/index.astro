@@ -7,6 +7,9 @@ const { pages, total } = await getDesignPages();
 const first = pages[0] ?? [];
 ---
 
-<SiteLayout path={withBase()} description="在一个 3D 展厅里环游，走近每一份界面存档。">
+<SiteLayout
+  path={withBase()}
+  description="在 3D 画廊中环游博客、网站与工具的设计存档，走近真实界面，细看每一份设计。"
+>
   <Gallery designs={first} total={total} nextPage={pages.length > 1 ? 2 : undefined} />
 </SiteLayout>

@@ -8,516 +8,717 @@ import '../styles/gallery.css';
 interface Props {
   designs: CollectionEntry<'designs'>[];
   total: number;
-  /** 还有下一页时给出页码，HUD 里保留一个「继续翻阅」入口。 */
   nextPage?: number;
 }
 
 const { designs, total, nextPage } = Astro.props;
-
-// 环形节距与半径都跟着藏品数算：固定 72° 只对 5 件成立。
-// 半径按「相邻画框刚好不碰」的值再收一点（1.16 倍），让正前方那帧明显最大、
-// 左右各露出邻框边角，观感是站在屋里转圈而不是看一排远处的画。
-const count = Math.max(designs.length, 1);
-const step = 360 / count;
-const touch = 0.5 / Math.tan(Math.PI / count);
-const radius = Math.min(1.05, Math.max(0.72, touch * 1.16));
-
-// 卷次与档案页同源，画廊里只用来标序号，不参与环形排布。
-const DIGITS = ['', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
-function volumeOf(index: number) {
-  const n = index + 1;
-  if (n < 10) return DIGITS[n];
-  const tens = Math.floor(n / 10);
-  const ones = n % 10;
-  const prefix = tens === 1 ? '拾' : DIGITS[tens] + '拾';
-  return prefix + DIGITS[ones];
-}
-
 const items = designs.map((design, index) => ({
-  id: design.id,
   index,
-  volume: volumeOf(index),
-  title: design.data.title,
-  category: design.data.category,
-  description: design.data.description,
-  tags: design.data.tags,
-  date: design.data.date,
-  version: design.data.version.replace(/^v/, ''),
-  colors: design.data.colors,
+  number: String(index + 1).padStart(2, '0'),
+  ...design.data,
   cover: withBase(design.data.cover),
+  preview: withBase(design.data.preview),
   size: readPublicImageSize(design.data.cover),
   href: withBase('archive/' + design.id + '/'),
 }));
+const first = items[0];
 ---
 
-<div
-  class="gal"
-  id="gallery"
-  data-theme={defaultTheme}
-  data-mode="gallery"
-  role="region"
-  aria-label="设计收藏 · 3D 展厅"
-  style={'--step:' + step + 'deg;--r:calc(var(--fw) * ' + radius.toFixed(4) + ')'}
->
-  <div class="gal-stage">
-    <div class="gal-scene">
-      <div class="gal-wall gal-wall--back"></div>
-      <div class="gal-wall gal-wall--left"></div>
-      <div class="gal-wall gal-wall--right"></div>
-      <div class="gal-wall gal-wall--floor"></div>
-      <div class="gal-wall gal-wall--ceiling"></div>
-      <div class="gal-lamp"></div>
-
-      <div class="gal-ring" id="gal-ring">
-        {items.map((item) => (
-          <article
-            class="gal-frame"
-            data-i={item.index}
-            data-active={item.index === 0 ? 'true' : 'false'}
-            style={'--i:' + item.index}
-          >
-            <div class="gal-turn">
-              <div class="gal-face gal-face--front">
-                <a class="gal-cover" href={item.href}>
-                  <img
-                    src={item.cover}
-                    alt={item.title + '界面封面'}
-                    width={item.size.width}
-                    height={item.size.height}
-                    loading={item.index === 0 ? 'eager' : 'lazy'}
-                    decoding="async"
-                  />
-                  <span class="gal-no">卷 {item.volume}</span>
-                </a>
-                <div class="gal-caption">
-                  <h2>{item.title}</h2>
-                  <p>{item.category}</p>
-                </div>
-              </div>
-
-              <div class="gal-face gal-face--back">
-                <p class="gal-note-kicker">第 {item.volume} 号藏品</p>
-                <h2 class="gal-note-title">{item.title}</h2>
-                <p class="gal-note-text">{item.description}</p>
-                <ul class="gal-tags">
-                  {item.tags.map((tag) => (
-                    <li>{tag}</li>
-                  ))}
-                </ul>
-                <a class="gal-more" href={item.href}>
-                  查看完整档案
-                </a>
-              </div>
-            </div>
-
-            <div class="gal-aside gal-aside--palette" aria-hidden="true">
-              <p class="gal-aside-k">纸 色</p>
-              <ul class="gal-swatches">
-                {item.colors.map((color) => (
-                  <li style={'--c:' + color}>
-                    <i />
-                    <span>{color.toUpperCase()}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div class="gal-aside gal-aside--spec" aria-hidden="true">
-              <p class="gal-aside-k">藏 品 说 明</p>
-              <dl class="gal-spec">
-                <div>
-                  <dt>类目</dt>
-                  <dd>{item.category}</dd>
-                </div>
-                <div>
-                  <dt>版本</dt>
-                  <dd>V{item.version}</dd>
-                </div>
-                <div>
-                  <dt>入藏</dt>
-                  <dd>{item.date.replaceAll('-', '.')}</dd>
-                </div>
-                <div>
-                  <dt>卷次</dt>
-                  <dd>卷 {item.volume}</dd>
-                </div>
-              </dl>
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  </div>
-
-  <h1 class="gal-sr">设计收藏 · 界面存档展厅</h1>
-
-  <div class="gal-noise"></div>
-
-  <header class="gal-top">
-    <div class="gal-brand">
+<section class="gal" id="gallery" data-theme={defaultTheme} aria-label="设计收藏 · 3D 画廊">
+  <header class="gal-header">
+    <a class="gal-brand" href={withBase()} aria-label="知简设计收藏首页">
       <span class="gal-seal" aria-hidden="true">
         知简
       </span>
-      <b>设 计 收 藏</b>
-    </div>
-    <div class="gal-tools">
-      <div class="gal-themes" role="group" aria-label="展厅主题">
-        {galleryThemes.map((theme) => (
-          <button
-            type="button"
-            class="gal-theme"
-            data-theme-id={theme.id}
-            style={'--s1:' + theme.swatch[0] + ';--s2:' + theme.swatch[1]}
-            aria-pressed={theme.id === defaultTheme ? 'true' : 'false'}
-            aria-label={'展厅主题：' + theme.label}
-            title={theme.label}
-          />
-        ))}
-      </div>
-      <div class="gal-dots" id="gal-dots" role="tablist" aria-label="藏品索引">
-        {items.map((item) => (
-          <button
-            type="button"
-            role="tab"
-            data-dot={item.index}
-            aria-current={item.index === 0 ? 'true' : 'false'}
-            aria-label={'第 ' + item.volume + ' 号：' + item.title}
-          />
-        ))}
-      </div>
+      <span class="gal-wordmark">
+        设计收藏<small>INTERFACE ARCHIVE</small>
+      </span>
+    </a>
+    <div class="gal-header-tools">
+      <span class="gal-total">{String(total).padStart(2, '0')} 件藏品 · 3D 展厅</span>
+      <details class="gal-appearance">
+        <summary>
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="6.5" stroke="currentColor" />
+            <path d="M10 3.5a6.5 6.5 0 0 0 0 13z" fill="currentColor" />
+          </svg>
+          <span data-theme-label>
+            {galleryThemes.find((theme) => theme.id === defaultTheme)?.label}
+          </span>
+          <svg
+            class="gal-chevron"
+            width="12"
+            height="12"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.3" />
+          </svg>
+        </summary>
+        <div class="gal-themes" role="group" aria-label="页面外观">
+          <p>选择外观</p>
+          {galleryThemes.map((theme) => (
+            <button
+              type="button"
+              class="gal-theme"
+              data-theme-id={theme.id}
+              style={'--swatch:' + theme.swatch[0] + ';--swatch-accent:' + theme.swatch[1]}
+              aria-pressed={theme.id === defaultTheme ? 'true' : 'false'}
+            >
+              <span class="gal-theme-swatch" aria-hidden="true" />
+              <span class="gal-theme-name">{theme.label}</span>
+              <svg
+                class="gal-theme-check"
+                width="14"
+                height="14"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path d="m3 8 3 3 7-7" stroke="currentColor" stroke-width="1.4" />
+              </svg>
+            </button>
+          ))}
+        </div>
+      </details>
     </div>
   </header>
+  <div class="gal-room" aria-hidden="true">
+    <div class="gal-arch" />
+    <div class="gal-wall-light" />
+    <div class="gal-floor" />
+    <div class="gal-orbit gal-orbit--outer" />
+    <div class="gal-orbit gal-orbit--inner" />
+  </div>
 
-  <footer class="gal-hud">
-    <div>
-      <p class="gal-hud-k" id="gal-kicker">
-        展 厅 ／ 共 {total} 件藏品
-      </p>
-      <p class="gal-hud-t" id="gal-title">
-        {items[0]?.title}
-        <em>／</em>
-        {items[0]?.category}
-      </p>
-      <div class="gal-actions" id="gal-actions">
-        <button type="button" class="gal-btn" data-act="flip">
-          翻开说明
+  <div class="gal-room-label">
+    <h1>界面之境</h1>
+    <span>THE INTERFACE GALLERY</span>
+  </div>
+
+  {first ? (
+    <>
+      <section class="gal-stage" aria-label="环绕画廊" tabindex="0">
+        <div class="gal-depth">
+          {items.map((item) => {
+            const slot = item.index > items.length / 2 ? item.index - items.length : item.index;
+            return (
+              <a
+                class="gal-art"
+                data-art={item.index}
+                data-slot={slot}
+                href={item.href}
+                data-preview={item.preview}
+                data-cover={item.cover}
+                data-title={item.title}
+                draggable="false"
+                aria-label={'切换至' + item.title}
+                aria-hidden={Math.abs(slot) !== 1 ? 'true' : 'false'}
+                tabindex={Math.abs(slot) === 1 ? 0 : -1}
+              >
+                <span class="gal-art-edge" aria-hidden="true" />
+                <span class="gal-art-shadow" aria-hidden="true" />
+                <div class="gal-art-front">
+                  <img
+                    src={item.cover}
+                    width={item.size.width}
+                    height={item.size.height}
+                    alt={item.title + '界面封面'}
+                    loading="eager"
+                    decoding="async"
+                    draggable="false"
+                  />
+                  <span class="gal-art-label">
+                    <span>
+                      {item.number} / {item.category}
+                    </span>
+                    <span>{item.title}</span>
+                  </span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+
+        <div class="gal-center">
+          <div class="gal-center-bar">
+            <span>
+              <i />
+              正在展出 <b data-current-number>01</b>
+            </span>
+            <span>LIVE EXHIBIT</span>
+          </div>
+          <div class="gal-canvas" aria-busy="true">
+            <img
+              class="gal-poster"
+              src={first.cover}
+              width={first.size.width}
+              height={first.size.height}
+              alt=""
+              draggable="false"
+            />
+            <iframe
+              class="gal-live"
+              src={first.preview}
+              title={first.title + '界面预览'}
+              tabindex="-1"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+            />
+            <button class="gal-enter" type="button" data-expand aria-label="走近当前作品">
+              <span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"
+                    stroke="currentColor"
+                    stroke-width="1.3"
+                  />
+                </svg>
+                走近细看
+              </span>
+            </button>
+          </div>
+          <div class="gal-center-foot">
+            <span data-frame-title>{first.title}</span>
+            <span>知简 · 设计收藏</span>
+          </div>
+          <div class="gal-center-shadow" aria-hidden="true" />
+        </div>
+
+        <button class="gal-nav gal-nav--prev" type="button" data-step="-1" aria-label="上一件作品">
+          <span aria-hidden="true">←</span>
         </button>
-        <a class="gal-btn" data-act="archive" href={items[0]?.href}>
-          完整档案
-        </a>
-        <button type="button" class="gal-btn" data-act="back">
-          回到环游
+        <button class="gal-nav gal-nav--next" type="button" data-step="1" aria-label="下一件作品">
+          <span aria-hidden="true">→</span>
         </button>
+      </section>
+
+      <div class="gal-bottom">
+        <div class="gal-caption" aria-live="polite" aria-atomic="true">
+          {items.map((item) => (
+            <article data-panel={item.index} hidden={item.index !== 0}>
+              <p class="gal-caption-kicker">
+                {item.category} / {item.version.toUpperCase()}
+                <span>{item.date.replaceAll('-', '.')}</span>
+              </p>
+              <h2>{item.title}</h2>
+              <p class="gal-description">{item.description}</p>
+              <a class="gal-archive" href={item.href}>
+                设计档案 <span aria-hidden="true">↗</span>
+              </a>
+            </article>
+          ))}
+        </div>
+        <div class="gal-browse">
+          <p>
+            拖动环游 <span>／</span> 滚轮与方向键切换
+          </p>
+          <nav class="gal-index" aria-label="藏品索引">
+            {items.map((item) => (
+              <a
+                href={item.href}
+                data-select={item.index}
+                aria-current={item.index === 0 ? 'true' : 'false'}
+                aria-label={item.number + ' · ' + item.title}
+              >
+                <span>{item.number}</span>
+              </a>
+            ))}
+          </nav>
+        </div>
+        <div class="gal-actions">
+          <button class="gal-visit" type="button" data-expand>
+            走近作品 <span aria-hidden="true">↗</span>
+          </button>
+          <a data-open href={first.preview} target="_blank" rel="noopener noreferrer">
+            独立打开 <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
-      {nextPage && (
-        <a class="gal-btn gal-pager" href={withBase('page/' + nextPage + '/')}>
-          继续翻阅 · 第 {nextPage} 页
-        </a>
-      )}
-    </div>
-    <p class="gal-hud-tip" id="gal-tip">
-      左右拖动环游展厅
-      <br />
-      点击画框走近细看
-    </p>
+      <p class="gal-announcement" role="status" data-announcement />
+    </>
+  ) : (
+    <p class="gal-empty">收藏还在整理，稍后见。</p>
+  )}
+
+  <footer class="gal-footer">
+    <span>DESIGNED TO BE EXPLORED</span>
+    {nextPage ? (
+      <a href={withBase('page/' + nextPage + '/')}>继续翻阅 ↗</a>
+    ) : (
+      <span>知简 · 持续收录</span>
+    )}
   </footer>
-
   <noscript>
-    <div class="gal-noscript">
-      展厅需要脚本旋转；<a href={items[0]?.href ?? withBase()}>从第一件藏品</a>开始按页浏览。
-    </div>
+    <style is:inline>
+      .gal-enter,
+      .gal-nav,
+      .gal-actions button,
+      .gal-appearance {
+        display: none;
+      }
+    </style>
   </noscript>
-</div>
-
+  <dialog class="gal-dialog" aria-label="放大作品预览">
+    <div class="gal-dialog-bar">
+      <p data-dialog-title>作品预览</p>
+      <button type="button" data-close aria-label="关闭放大预览">
+        关闭 <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <iframe
+      title="放大作品预览"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    />
+  </dialog>
+</section>
 <script>
-  const el = document.getElementById('gallery');
-  if (el) {
-    mount(el);
-  }
+  const root = document.querySelector<HTMLElement>('#gallery');
+  if (root) mountGallery(root);
 
-  function mount(root: HTMLElement) {
-    const ring = root.querySelector<HTMLElement>('#gal-ring');
-    const frames = Array.from(root.querySelectorAll<HTMLElement>('.gal-frame'));
-    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dot]'));
-    const themeButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-theme-id]'));
-    const titleEl = root.querySelector<HTMLElement>('#gal-title');
-    const kickerEl = root.querySelector<HTMLElement>('#gal-kicker');
-    const tipEl = root.querySelector<HTMLElement>('#gal-tip');
-    const archiveLink = root.querySelector<HTMLAnchorElement>('[data-act="archive"]');
-    const flipBtn = root.querySelector<HTMLButtonElement>('[data-act="flip"]');
-    const count = frames.length;
-    if (!ring || count === 0) return;
-    const ringEl = ring;
-    {
-      const step = 360 / count;
-      const STORE_THEME = 'zhijian-gallery-theme';
-      let angle = 0;
-      let active = 0;
-      let mode: 'gallery' | 'focus' = 'gallery';
-      let flipped = false;
+  function mountGallery(root: HTMLElement) {
+    const controller = new AbortController();
+    const { signal } = controller;
+    const appearance = root.querySelector<HTMLDetailsElement>('.gal-appearance')!;
+    const themeLabel = root.querySelector<HTMLElement>('[data-theme-label]')!;
+    const themes = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-theme-id]'));
+    const STORE_THEME = 'zhijian-gallery-theme';
 
-      const mod = (n: number) => ((n % count) + count) % count;
-      const indexAt = () => mod(Math.round(-angle / step));
-
-      function paint(immediate = false) {
-        if (immediate) root.classList.add('is-instant');
-        ringEl.style.setProperty('--ring', angle + 'deg');
-        if (immediate) requestAnimationFrame(() => root.classList.remove('is-instant'));
-
-        const current = indexAt();
-        if (current !== active) {
-          active = current;
-          syncHud();
-        }
-        frames.forEach((frame, i) => {
-          const isActive = i === active;
-          frame.dataset.active = isActive ? 'true' : 'false';
-          // 环收得很紧，超过 110° 的帧已经转到镜头背后，投影会糊成一块空白板，直接隐去。
-          let delta = Math.abs(i - active) * step;
-          delta = Math.min(delta, 360 - delta);
-          frame.dataset.far = !isActive && delta > 110 ? 'true' : 'false';
-        });
-        dots.forEach((dot, i) => {
-          dot.setAttribute('aria-current', i === active ? 'true' : 'false');
-        });
-      }
-
-      function syncHud() {
-        const frame = frames[active];
-        const name = frame?.querySelector('.gal-caption h2')?.textContent?.trim() ?? '';
-        const category = frame?.querySelector('.gal-caption p')?.textContent?.trim() ?? '';
-        const href = frame?.querySelector<HTMLAnchorElement>('.gal-cover')?.getAttribute('href');
-        if (titleEl) {
-          titleEl.textContent = name;
-          const em = document.createElement('em');
-          em.textContent = '／';
-          titleEl.append(em, category);
-        }
-        if (kickerEl) {
-          kickerEl.textContent =
-            mode === 'focus' ? '藏 品 ／ 就 近 细 看' : '展 厅 ／ 共 ' + count + ' 件藏品';
-        }
-        if (archiveLink && href) archiveLink.setAttribute('href', href);
-      }
-
-      function snapTo(index: number) {
-        const base = -index * step;
-        // 吸附到离当前角度最近的那一圈，避免跨半圈后倒着转回来。
-        const turns = Math.round((angle - base) / 360);
-        angle = base + turns * 360;
-        paint();
-      }
-
-      function enterFocus(index: number) {
-        mode = 'focus';
-        root.dataset.mode = 'focus';
-        flipped = false;
-        setSpin(0);
-        snapTo(index);
-        syncHud();
-        if (tipEl) tipEl.innerHTML = '左右拖动换藏品<br />Esc 回到环游';
-        flipBtn?.focus({ preventScroll: true });
-      }
-
-      function exitFocus() {
-        mode = 'gallery';
-        root.dataset.mode = 'gallery';
-        flipped = false;
-        setSpin(0);
-        if (tipEl) tipEl.innerHTML = '左右拖动环游展厅<br />点击画框走近细看';
-        syncHud();
-        dots[active]?.focus({ preventScroll: true });
-      }
-
-      function setSpin(deg: number) {
-        const turn = frames[active]?.querySelector<HTMLElement>('.gal-turn');
-        if (turn) turn.style.setProperty('--spin', deg + 'deg');
-        if (flipBtn) flipBtn.textContent = deg === 0 ? '翻开说明' : '合上说明';
-      }
-
-      function flip() {
-        if (mode !== 'focus') return;
-        flipped = !flipped;
-        setSpin(flipped ? 180 : 0);
-      }
-
-      function stepBy(delta: number) {
-        if (mode === 'focus') {
-          snapTo(mod(active + delta));
-          return;
-        }
-        angle -= delta * step;
-        active = indexAt();
-        paint();
-        syncHud();
-      }
-
-      // ---------- 拖动 ----------
-      let dragging = false;
-      let startX = 0;
-      let startAngle = 0;
-      let moved = 0;
-      let downTarget: HTMLElement | null = null;
-
-      // 3D 渲染上下文里 elementFromPoint 只会返回舞台容器（Chrome 的命中测试会
-      // 跳过 preserve-3d 里的变换子树），elementsFromPoint 才拿得到真实堆栈。
-      const frameAtPoint = (x: number, y: number): HTMLElement | null => {
-        for (const node of document.elementsFromPoint(x, y)) {
-          const frame = (node as HTMLElement).closest<HTMLElement>('.gal-frame');
-          if (frame) return frame;
-        }
-        return null;
-      };
-
-      const onDown = (event: PointerEvent) => {
-        if (event.button !== 0) return;
-        const target = event.target as HTMLElement;
-        if (target.closest('.gal-aside, .gal-tools, .gal-actions')) return;
-        dragging = true;
-        moved = 0;
-        startX = event.clientX;
-        startAngle = angle;
-        // 指针被捕获后 pointerup 的 target 会变成 root，所以要在这里先记住按下的元素。
-        downTarget = target;
-        root.classList.add('is-dragging');
-        // 有些环境（合成分发、部分触屏）不允许捕获，失败不能打断后续逻辑。
-        try {
-          root.setPointerCapture?.(event.pointerId);
-        } catch {
-          /* 没有活动指针就算了，拖动仍可用。 */
-        }
-      };
-
-      const onMove = (event: PointerEvent) => {
-        if (!dragging) return;
-        const dx = event.clientX - startX;
-        moved = Math.max(moved, Math.abs(dx));
-        angle = startAngle - dx * 0.16;
-        paint();
-      };
-
-      const onUp = (event: PointerEvent) => {
-        if (!dragging) return;
-        dragging = false;
-        root.classList.remove('is-dragging');
-        try {
-          if (root.hasPointerCapture?.(event.pointerId))
-            root.releasePointerCapture(event.pointerId);
-        } catch {
-          /* 同上。 */
-        }
-        if (moved > 6) {
-          snapTo(indexAt());
-          return;
-        }
-        // 没拖动就是点击：先转到被点的那一帧，再点一次才走近。
-        const hit =
-          downTarget?.closest<HTMLElement>('.gal-frame') ??
-          frameAtPoint(event.clientX, event.clientY);
-        downTarget = null;
-        if (!hit) return;
-        const index = Number(hit.dataset.i);
-        if (mode === 'focus') {
-          if (index === active) flip();
-          else snapTo(index);
-          return;
-        }
-        if (index === active) enterFocus(index);
-        else snapTo(index);
-      };
-
-      root.addEventListener('pointerdown', onDown);
-      root.addEventListener('pointermove', onMove);
-      root.addEventListener('pointerup', onUp);
-      root.addEventListener('pointercancel', () => {
-        dragging = false;
-        downTarget = null;
-        root.classList.remove('is-dragging');
-      });
-
-      // 画框里的封面链接在展厅里只用来「走近」，没有脚本时才真的跳转。
-      root.addEventListener('click', (event) => {
-        const link = (event.target as HTMLElement).closest('a.gal-cover');
-        if (link) event.preventDefault();
-      });
-
-      root.addEventListener(
-        'wheel',
-        (event) => {
-          if (Math.abs(event.deltaY) < 4) return;
-          event.preventDefault();
-          stepBy(event.deltaY > 0 ? 1 : -1);
-        },
-        { passive: false },
-      );
-
-      window.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          stepBy(-1);
-        } else if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          stepBy(1);
-        } else if (event.key === 'Escape' && mode === 'focus') {
-          event.preventDefault();
-          exitFocus();
-        } else if ((event.key === 'Enter' || event.key === ' ') && mode === 'focus') {
-          const tag = (event.target as HTMLElement)?.tagName;
-          if (tag === 'BUTTON' || tag === 'A') return;
-          event.preventDefault();
-          flip();
-        }
-      });
-
-      dots.forEach((dot) => {
-        dot.addEventListener('click', () => {
-          const index = Number(dot.dataset.dot);
-          if (mode === 'focus') {
-            snapTo(index);
-          } else {
-            enterFocus(index);
-          }
-        });
-      });
-
-      flipBtn?.addEventListener('click', flip);
-      root.querySelector('[data-act="back"]')?.addEventListener('click', exitFocus);
-
-      // ---------- 主题 ----------
-      function applyTheme(id: string) {
-        root.dataset.theme = id;
-        themeButtons.forEach((btn) => {
-          btn.setAttribute('aria-pressed', btn.dataset.themeId === id ? 'true' : 'false');
-        });
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) {
-          const bg = getComputedStyle(root).getPropertyValue('--gal-bg').trim();
-          if (bg) meta.setAttribute('content', bg);
-        }
-      }
-
-      themeButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.themeId;
-          if (!id) return;
+    function applyTheme(id: string) {
+      const selected = themes.find((button) => button.dataset.themeId === id);
+      if (!selected) return;
+      root.dataset.theme = id;
+      themeLabel.textContent = selected.querySelector('.gal-theme-name')!.textContent;
+      themes.forEach((button) => button.setAttribute('aria-pressed', String(button === selected)));
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute('content', getComputedStyle(root).getPropertyValue('--gal-bg').trim());
+    }
+    themes.forEach((button) =>
+      button.addEventListener(
+        'click',
+        () => {
+          const id = button.dataset.themeId!;
           applyTheme(id);
+          appearance.open = false;
+          appearance.querySelector('summary')?.focus();
           try {
             localStorage.setItem(STORE_THEME, id);
           } catch {
-            /* 隐私模式下忽略 */
+            /* 隐私模式不保存外观。 */
           }
-        });
-      });
-
-      try {
-        const saved = localStorage.getItem(STORE_THEME);
-        if (saved) applyTheme(saved);
-      } catch {
-        /* 隐私模式下忽略 */
-      }
-
-      paint(true);
-      syncHud();
+        },
+        { signal },
+      ),
+    );
+    try {
+      applyTheme(localStorage.getItem(STORE_THEME) || root.dataset.theme!);
+    } catch {
+      applyTheme(root.dataset.theme!);
     }
+    document.addEventListener(
+      'click',
+      (event) => {
+        if (!appearance.contains(event.target as Node)) appearance.open = false;
+      },
+      { signal },
+    );
+
+    const artworks = Array.from(root.querySelectorAll<HTMLAnchorElement>('[data-art]'));
+    const choices = Array.from(root.querySelectorAll<HTMLAnchorElement>('[data-select]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'));
+    const stage = root.querySelector<HTMLElement>('.gal-stage');
+    const preview = root.querySelector<HTMLIFrameElement>('.gal-live');
+    if (!stage || !preview || artworks.length === 0) return;
+    const scene = stage;
+    const frame = preview;
+    const center = root.querySelector<HTMLElement>('.gal-center')!;
+    const canvas = root.querySelector<HTMLElement>('.gal-canvas')!;
+    const poster = root.querySelector<HTMLImageElement>('.gal-poster')!;
+    const number = root.querySelector<HTMLElement>('[data-current-number]')!;
+    const title = root.querySelector<HTMLElement>('[data-frame-title]')!;
+    const openLink = root.querySelector<HTMLAnchorElement>('[data-open]')!;
+    const announcement = root.querySelector<HTMLElement>('[data-announcement]')!;
+    const dialog = root.querySelector<HTMLDialogElement>('.gal-dialog')!;
+    const expanded = dialog.querySelector<HTMLIFrameElement>('iframe')!;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const compact = window.matchMedia('(max-width: 600px)');
+    const SPRING_FREQUENCY = 18;
+    const WHEEL_GESTURE_GAP = 160;
+    let active = 0;
+    let position = 0;
+    let target = 0;
+    let velocity = 0;
+    let animationFrame = 0;
+    let lastTime = 0;
+    let frameWidth = center.offsetWidth;
+    let frameIndex = 0;
+    let frameReady = false;
+    let liveBlend = 0;
+    let lastWheel = 0;
+    let lastWheelStep = 0;
+    let wheelDirection = 0;
+    let wheelDistance = 0;
+    let wheelConsumed = false;
+    let previousWheelDelta = 0;
+    let pointer: number | null = null;
+    let startX = 0;
+    let distance = 0;
+    let dragOrigin = 0;
+    let dragSpan = 1;
+    let pointerX = 0;
+    let pointerTime = 0;
+    let dragged = false;
+    let suppressClickUntil = 0;
+
+    function wrap(value: number) {
+      return ((value % artworks.length) + artworks.length) % artworks.length;
+    }
+
+    function relative(value: number) {
+      return wrap(value + artworks.length / 2) - artworks.length / 2;
+    }
+
+    // 所有画框共用一个连续位置，重新选中时保留当前速度，不重播入场动画。
+    function pose(offset: number) {
+      const depth = Math.min(2, Math.abs(offset));
+      const direction = Math.sign(offset);
+      const gap = compact.matches ? 0.7 : 0.76;
+      const sideDepth = compact.matches ? 230 : 210;
+      const sideScale = compact.matches ? 0.8 : 0.68;
+      const sideAngle = compact.matches ? 23 : 24;
+      // 曲线经过原有的侧框与后排位置，中途不会在槽位边界突然改变轨迹。
+      const outerGap = 1.15;
+      const outerDepth = 700;
+      const outerAngle = 30;
+      const x =
+        direction *
+        frameWidth *
+        ((2 * gap - outerGap / 2) * depth + (outerGap / 2 - gap) * depth ** 2);
+      const y = compact.matches ? 0 : 8 * Math.sin((depth * Math.PI) / 2);
+      const z = -(
+        (2 * sideDepth - outerDepth / 4) * depth ** 2 +
+        (outerDepth / 4 - sideDepth) * depth ** 3
+      );
+      const angle =
+        -direction *
+        ((2 * sideAngle - outerAngle / 2) * depth + (outerAngle / 2 - sideAngle) * depth ** 2);
+      const scale =
+        sideScale + ((1 - sideScale) * (1 + Math.cos(Math.min(1, depth) * Math.PI))) / 2;
+      const fade = Math.max(0, depth - 1);
+      return {
+        transform: `translate3d(${x}px, ${y}px, ${z}px) rotateY(${angle}deg)`,
+        scale,
+        sideScale,
+        opacity: 1 - fade * fade * (3 - 2 * fade),
+      };
+    }
+
+    function render() {
+      artworks.forEach((art, index) => {
+        const state = pose(relative(index - position));
+        art.style.transform = `${state.transform} scale(${state.scale / state.sideScale})`;
+        art.style.opacity = String(state.opacity);
+      });
+      const offset = relative(frameIndex - position);
+      const opacity = frameReady ? liveBlend * Math.max(0, 1 - Math.abs(offset) * 2) : 0;
+      center.style.opacity = String(opacity);
+      if (opacity > 0 && Math.abs(offset) > 0.0001) {
+        const state = pose(offset);
+        center.style.transform = `perspective(1800px) ${state.transform} scale(${state.scale})`;
+      } else {
+        // 静止后撤掉合成提示与变换，保持真实页面的原生清晰度。
+        center.style.removeProperty('transform');
+      }
+    }
+
+    function loadPreview() {
+      if (frameIndex === active) return;
+      frameIndex = active;
+      frameReady = false;
+      liveBlend = 0;
+      const art = artworks[active];
+      number.textContent = String(active + 1).padStart(2, '0');
+      title.textContent = art.dataset.title!;
+      poster.src = art.dataset.cover!;
+      canvas.setAttribute('aria-busy', 'true');
+      frame.title = art.dataset.title + '界面预览';
+      frame.src = art.dataset.preview!;
+    }
+
+    function animate(now: number) {
+      animationFrame = 0;
+      const elapsed = Math.min(Math.max((now - lastTime) / 1000, 0), 0.064);
+      lastTime = now;
+      const isDragging = pointer !== null && dragged;
+      if (reducedMotion.matches) {
+        position = target;
+        velocity = 0;
+      } else if (!isDragging) {
+        // 临界阻尼的解析解按真实时间推进，高刷新率与掉帧后都不会改变运动节奏。
+        const displacement = position - target;
+        const spring = velocity + SPRING_FREQUENCY * displacement;
+        const decay = Math.exp(-SPRING_FREQUENCY * elapsed);
+        position = target + (displacement + spring * elapsed) * decay;
+        velocity = (velocity - SPRING_FREQUENCY * spring * elapsed) * decay;
+      }
+      const isSettled =
+        !isDragging && Math.abs(position - target) < 0.0005 && Math.abs(velocity) < 0.008;
+      if (isSettled) {
+        position = target;
+        velocity = 0;
+        // 移动中只绘制已有内容，停稳后才加载最终作品，避免连续操作触发反复解析页面。
+        loadPreview();
+        if (frameReady) {
+          liveBlend = reducedMotion.matches ? 1 : 1 - (1 - liveBlend) * Math.exp(-elapsed * 24);
+          if (liveBlend > 0.999) liveBlend = 1;
+        }
+      }
+      scene.classList.toggle('is-moving', !isSettled);
+      center.classList.toggle('is-changing', !isSettled);
+      center.classList.toggle('is-revealing', isSettled && frameReady && liveBlend < 1);
+      render();
+      if ((!isSettled && !isDragging) || (isSettled && frameReady && liveBlend < 1)) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        lastTime = 0;
+      }
+    }
+
+    function wake() {
+      if (animationFrame || signal.aborted) return;
+      if (!lastTime) lastTime = performance.now();
+      animationFrame = requestAnimationFrame(animate);
+    }
+
+    async function finishLoading() {
+      const source = frame.src;
+      if (frame.contentDocument?.URL !== source) return;
+      await frame.contentDocument.fonts.ready;
+      if (signal.aborted || frame.src !== source) return;
+      frameReady = true;
+      canvas.setAttribute('aria-busy', 'false');
+      wake();
+    }
+    frame.addEventListener('load', finishLoading, { signal });
+    if (
+      frame.contentDocument?.readyState === 'complete' &&
+      frame.contentWindow?.location.href !== 'about:blank'
+    )
+      finishLoading();
+
+    function select(index: number) {
+      const next = wrap(index);
+      if (next === active) return;
+      target += relative(index - active);
+      active = next;
+      artworks.forEach((art, i) => {
+        const offset = (i - active + artworks.length) % artworks.length;
+        const slot = offset > artworks.length / 2 ? offset - artworks.length : offset;
+        art.dataset.slot = String(slot);
+        art.setAttribute('aria-hidden', String(Math.abs(slot) !== 1));
+        art.tabIndex = Math.abs(slot) === 1 ? 0 : -1;
+      });
+      choices.forEach((choice, i) => choice.setAttribute('aria-current', String(i === active)));
+      panels.forEach((panel, i) => {
+        panel.hidden = i !== active;
+      });
+      const art = artworks[active];
+      openLink.href = art.dataset.preview!;
+      announcement.textContent = '正在展出：' + art.dataset.title;
+      scene.classList.toggle('is-moving', !reducedMotion.matches);
+      center.classList.toggle('is-changing', !reducedMotion.matches);
+      wake();
+    }
+
+    const resize = new ResizeObserver(() => {
+      frameWidth = center.offsetWidth;
+      wake();
+    });
+    resize.observe(center);
+    reducedMotion.addEventListener('change', wake, { signal });
+    compact.addEventListener('change', wake, { signal });
+    render();
+
+    [...artworks, ...choices].forEach((link) =>
+      link.addEventListener(
+        'click',
+        (event) => {
+          if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          select(Number(link.dataset.art ?? link.dataset.select));
+        },
+        { signal },
+      ),
+    );
+    root.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((button) =>
+      button.addEventListener('click', () => select(active + Number(button.dataset.step)), {
+        signal,
+      }),
+    );
+
+    function openPreview() {
+      const art = artworks[active];
+      dialog.querySelector('[data-dialog-title]')!.textContent = art.dataset.title!;
+      expanded.title = art.dataset.title + '放大预览';
+      expanded.src = art.dataset.preview!;
+      dialog.showModal();
+    }
+    root
+      .querySelectorAll('[data-expand]')
+      .forEach((button) => button.addEventListener('click', openPreview, { signal }));
+    root.querySelector('[data-close]')?.addEventListener('click', () => dialog.close(), { signal });
+    dialog.addEventListener(
+      'click',
+      (event) => {
+        if (event.target === dialog) dialog.close();
+      },
+      { signal },
+    );
+    dialog.addEventListener(
+      'close',
+      () => {
+        expanded.removeAttribute('src');
+      },
+      { signal },
+    );
+
+    scene.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (
+          pointer !== null ||
+          !event.isPrimary ||
+          event.button !== 0 ||
+          (event.target as HTMLElement).closest('.gal-nav')
+        )
+          return;
+        pointer = event.pointerId;
+        startX = event.clientX;
+        pointerX = event.clientX;
+        pointerTime = event.timeStamp;
+        distance = 0;
+        dragged = false;
+      },
+      { signal },
+    );
+    scene.addEventListener(
+      'pointermove',
+      (event) => {
+        if (event.pointerId !== pointer) return;
+        distance = event.clientX - startX;
+        if (Math.abs(distance) < 6 && !dragged) return;
+        if (!dragged) {
+          dragged = true;
+          dragOrigin = position;
+          dragSpan = Math.max(120, frameWidth * 0.76);
+          velocity = 0;
+          scene.setPointerCapture(event.pointerId);
+          scene.classList.add('is-dragging');
+        }
+        const elapsed = Math.max(1, event.timeStamp - pointerTime);
+        const nextPosition =
+          dragOrigin - Math.max(-dragSpan, Math.min(dragSpan, distance)) / dragSpan;
+        const speed = (-(event.clientX - pointerX) / elapsed / dragSpan) * 1000;
+        velocity = velocity * 0.6 + Math.max(-4, Math.min(4, speed)) * 0.4;
+        pointerX = event.clientX;
+        pointerTime = event.timeStamp;
+        position = nextPosition;
+        wake();
+      },
+      { signal },
+    );
+    function endDrag(event: PointerEvent) {
+      if (event.pointerId !== pointer) return;
+      pointer = null;
+      scene.classList.remove('is-dragging');
+      if (scene.hasPointerCapture(event.pointerId)) scene.releasePointerCapture(event.pointerId);
+      if (!dragged) return;
+      suppressClickUntil = performance.now() + 300;
+      if (event.timeStamp - pointerTime > 100) velocity = 0;
+      const isFlick = Math.abs(distance) > 12 && Math.abs(velocity) > 0.8;
+      if (event.type === 'pointerup' && (Math.abs(distance) > 45 || isFlick))
+        select(active + (distance < 0 ? 1 : -1));
+      if (event.type !== 'pointerup') velocity = 0;
+      wake();
+    }
+    document.addEventListener('pointerup', endDrag, { signal });
+    document.addEventListener('pointercancel', endDrag, { signal });
+    scene.addEventListener(
+      'lostpointercapture',
+      (event) => {
+        if (event.target === scene) endDrag(event);
+      },
+      { signal },
+    );
+    scene.addEventListener(
+      'click',
+      (event) => {
+        if (performance.now() >= suppressClickUntil) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      },
+      { capture: true, signal },
+    );
+    scene.addEventListener(
+      'wheel',
+      (event) => {
+        if (event.ctrlKey || pointer !== null) return;
+        const raw = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+        const delta = raw * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? frameWidth : 1);
+        if (!delta) return;
+        event.preventDefault();
+        const now = performance.now();
+        const direction = Math.sign(delta);
+        if (now - lastWheel > WHEEL_GESTURE_GAP || direction !== wheelDirection) {
+          wheelDistance = 0;
+          wheelConsumed = false;
+        }
+        const isWheelNotch = Math.abs(delta) >= 80 && Math.abs(delta) >= previousWheelDelta * 0.9;
+        const canRepeat = isWheelNotch && now - lastWheelStep > WHEEL_GESTURE_GAP;
+        lastWheel = now;
+        wheelDirection = direction;
+        previousWheelDelta = Math.abs(delta);
+        if (wheelConsumed && !canRepeat) return;
+        wheelDistance += Math.abs(delta);
+        if (wheelDistance < 32) return;
+        wheelDistance = 0;
+        wheelConsumed = true;
+        lastWheelStep = now;
+        select(active - direction);
+      },
+      { passive: false, signal },
+    );
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape' && appearance.open) {
+          appearance.open = false;
+          appearance.querySelector('summary')?.focus();
+          return;
+        }
+        if (
+          dialog.open ||
+          appearance.open ||
+          event.ctrlKey ||
+          event.metaKey ||
+          (event.target as HTMLElement).closest('input, textarea, select, [contenteditable]')
+        )
+          return;
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        select(active + (event.key === 'ArrowRight' ? 1 : -1));
+      },
+      { signal },
+    );
+    document.addEventListener('astro:before-swap', () => controller.abort(), { once: true });
+    signal.addEventListener(
+      'abort',
+      () => {
+        cancelAnimationFrame(animationFrame);
+        resize.disconnect();
+      },
+      { once: true },
+    );
   }
 </script>

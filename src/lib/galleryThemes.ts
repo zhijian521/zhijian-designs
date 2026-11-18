@@ -1,16 +1,16 @@
-// 画廊的展厅主题。色值只在这里出现一份，styles/gallery.css 按 data-theme 取值。
+// 外观选项的预览色，styles/gallery.css 按 data-theme 应用页面配色。
 export interface GalleryTheme {
   id: string;
   label: string;
-  /** 主题按钮上的小色块，取自墙面与画框。 */
+  /** 外观菜单中的背景与强调色。 */
   swatch: [string, string];
 }
 
 export const galleryThemes: GalleryTheme[] = [
-  { id: 'ink', label: '墨夜', swatch: ['#241f18', '#b4462f'] },
-  { id: 'paper', label: '宣纸', swatch: ['#f4eee0', '#8f3b2d'] },
-  { id: 'celadon', label: '青瓷', swatch: ['#16241f', '#6f8c7f'] },
-  { id: 'cube', label: '白盒', swatch: ['#f2f1ee', '#1c1c1c'] },
+  { id: 'ink', label: '墨夜', swatch: ['#10120f', '#d1b18a'] },
+  { id: 'paper', label: '宣纸', swatch: ['#e8e4da', '#8c5037'] },
+  { id: 'celadon', label: '青瓷', swatch: ['#0c1d19', '#b9d6a7'] },
+  { id: 'cube', label: '白盒', swatch: ['#e5e7e7', '#405b49'] },
 ];
 
 export const defaultTheme = 'ink';
