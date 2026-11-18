@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>耶温博客 · 设计语言</title>
+    <meta
+      name="description"
+      content="纸白页底、40px 网格、390 字重与墨色涟漪：SimpleBlog 极简设计语言的静态还原。"
+    />
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">跳到正文</a>
+    <div class="grid-bg" aria-hidden="true"></div>
+    <canvas class="ink-canvas" aria-hidden="true"></canvas>
+
+    <header class="masthead">
+      <div class="shell">
+        <div class="masthead-top">
+          <img class="mark" src="./assets/icon.svg" alt="" width="40" height="40" />
+          <p class="kicker">SIMPLEBLOG · DESIGN LANGUAGE</p>
+          <span class="kicker-num">V1</span>
+        </div>
+        <h1>纸白与涟漪</h1>
+        <p class="lede">
+          SimpleBlog 是耶温的个人博客。界面的底子只有纸白与细线：页底 <code>#fafafa</code>， 40px
+          一格的低对比网格铺满整屏，正文用系统无衬线的 390 字重，层级全部靠字号、字距与留白拉开。
+          全站的灰阶只有七档，强调用的就是最深的那枚墨。
+          下面把它的色、字、底纹与控件拆开摆出来，供对照，不是另起的一套视觉。
+        </p>
+        <ul class="axioms">
+          <li>
+            <b>一档灰，一枚墨</b>
+            <span>七个颜色值全是灰阶，强调色不引入第二个色相。</span>
+          </li>
+          <li>
+            <b>层级靠字号与留白</b>
+            <span>字重几乎只有 390 与 400，正文里最多用 500 标一处重点，不靠色块或阴影分层。</span>
+          </li>
+          <li>
+            <b>结构是一根发丝线</b>
+            <span>分区用 1px #e5e5e5，网格压到 1% 黑，阴影只留给浮动的那一枚。</span>
+          </li>
+        </ul>
+        <p class="masthead-meta">React 18 · TypeScript 5 · Vite 5 · Markdown 驱动 · MIT</p>
+      </div>
+    </header>
+
+    <div class="dock-wrap">
+      <div class="dock">
+        <div class="dock-group">
+          <span class="dock-label">网格</span>
+          <div class="seg" data-grid-group>
+            <button class="seg-btn" type="button" data-grid="40" aria-pressed="true">40px</button>
+            <button class="seg-btn" type="button" data-grid="20" aria-pressed="false">20px</button>
+            <button class="seg-btn" type="button" data-grid="off" aria-pressed="false">关</button>
+          </div>
+        </div>
+        <div class="dock-group">
+          <span class="dock-label">动效</span>
+          <div class="seg" data-motion-group>
+            <button class="seg-btn" type="button" data-motion="ink" aria-pressed="true">
+              涟漪
+            </button>
+            <button class="seg-btn" type="button" data-motion="snow" aria-pressed="false">
+              雪
+            </button>
+            <button class="seg-btn" type="button" data-motion="off" aria-pressed="false">关</button>
+          </div>
+        </div>
+        <button class="dock-toggle" type="button" data-rail-toggle aria-expanded="false">
+          章节
+        </button>
+      </div>
+    </div>
+
+    <div class="shell body-shell">
+      <aside class="rail" id="rail" aria-label="章节导航">
+        <div class="rail-head">
+          <h2>目录</h2>
+          <span class="rail-count">5</span>
+        </div>
+        <nav class="tree">
+          <div class="tree-cat">
+            <button class="tree-cat-head" type="button" aria-expanded="true" data-tree-toggle>
+              <span class="tree-caret" aria-hidden="true">▶</span>
+              <span class="tree-cat-name">设计基础</span>
+              <span class="tree-cat-num">(3)</span>
+            </button>
+            <div class="tree-cat-body is-open">
+              <div class="tree-cat-list">
+                <a class="tree-item is-active" href="#palette"><span>01</span>色板</a>
+                <a class="tree-item" href="#type"><span>02</span>字与距</a>
+                <a class="tree-item" href="#texture"><span>03</span>底纹与动效</a>
+              </div>
+            </div>
+          </div>
+          <div class="tree-cat">
+            <button class="tree-cat-head" type="button" aria-expanded="true" data-tree-toggle>
+              <span class="tree-caret" aria-hidden="true">▶</span>
+              <span class="tree-cat-name">组件</span>
+              <span class="tree-cat-num">(2)</span>
+            </button>
+            <div class="tree-cat-body is-open">
+              <div class="tree-cat-list">
+                <a class="tree-item" href="#controls"><span>04</span>控件</a>
+                <a class="tree-item" href="#modules"><span>05</span>模块</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <p class="rail-note">
+          左边这条树形目录本身也是原站的控件：分组可折叠，当前项左侧留一道 2px 墨线。
+        </p>
+      </aside>
+
+      <main id="main">
+        <section class="block" id="palette">
+          <header class="block-head">
+            <span class="block-num">01</span>
+            <div>
+              <p class="block-kicker">COLOR</p>
+              <h2>七枚颜色，一条从纸白到墨黑的直线</h2>
+            </div>
+          </header>
+          <p class="block-lede">
+            原站的颜色变量只有七个值，全部集中在 <code>styles/variables.css</code>。它们不构成色板，
+            而是一条从纸白到墨黑的直线：越往右对比越强，越往左越像纸。强调色没有另开色相，
+            取的是这条线上最深的那一枚；连分线用的 <code>#e5e5e5</code> 也在这条线上。
+          </p>
+          <div class="ramp" aria-hidden="true">
+            <span class="ramp-seg" style="--chip: #ffffff"></span>
+            <span class="ramp-seg" style="--chip: #fafafa"></span>
+            <span class="ramp-seg" style="--chip: #e5e5e5"></span>
+            <span class="ramp-seg" style="--chip: #999999"></span>
+            <span class="ramp-seg" style="--chip: #666666"></span>
+            <span class="ramp-seg" style="--chip: #3a3a3a"></span>
+            <span class="ramp-seg" style="--chip: #1a1a1a"></span>
+          </div>
+          <div class="ramp-scale" aria-hidden="true">
+            <span>纸 · 弱</span>
+            <span>墨 · 强</span>
+          </div>
+          <ol class="ramp-list">
+            <li>
+              <span class="ramp-dot" style="--chip: #ffffff"></span>
+              <span class="ramp-name">纸白</span>
+              <code class="ramp-hex">#FFFFFF</code>
+              <span class="ramp-role">卡面、浮层、抽屉底</span>
+              <span class="ramp-read"><b>1.05</b> 对页底</span>
+            </li>
+            <li>
+              <span class="ramp-dot" style="--chip: #fafafa"></span>
+              <span class="ramp-name">页底</span>
+              <code class="ramp-hex">#FAFAFA</code>
+              <span class="ramp-role">整页底色，网格画在它上面</span>
+              <span class="ramp-read"><b>1.00</b> 基准</span>
+            </li>
+            <li>
+              <span class="ramp-dot" style="--chip: #e5e5e5"></span>
+              <span class="ramp-name">分线</span>
+              <code class="ramp-hex">#E5E5E5</code>
+              <span class="ramp-role">1px 分隔、空闲格与滚动条</span>
+              <span class="ramp-read"><b>1.2</b> 仅作线</span>
+            </li>
+            <li>
+              <span class="ramp-dot" style="--chip: #999999"></span>
+              <span class="ramp-name">标注</span>
+              <code class="ramp-hex">#999999</code>
+              <span class="ramp-role">日期与计数，原站取这枚</span>
+              <span class="ramp-read"><b>2.7</b> 不足</span>
+            </li>
+            <li>
+              <span class="ramp-dot" style="--chip: #666666"></span>
+              <span class="ramp-name">次要</span>
+              <code class="ramp-hex">#666666</code>
+              <span class="ramp-role">说明、副标题与图标</span>
+              <span class="ramp-read"><b>5.5</b> AA</span>
+            </li>
+            <li>
+              <span class="ramp-dot" style="--chip: #3a3a3a"></span>
+              <span class="ramp-name">正文</span>
+              <code class="ramp-hex">#3A3A3A</code>
+              <span class="ramp-role">标题、正文与可点文字</span>
+              <span class="ramp-read"><b>10.9</b> AAA</span>
+            </li>
+            <li>
+              <span class="ramp-dot" style="--chip: #1a1a1a"></span>
+              <span class="ramp-name">强调</span>
+              <code class="ramp-hex">#1A1A1A</code>
+              <span class="ramp-role">链接、当前项与悬停底线</span>
+              <span class="ramp-read"><b>16.7</b> AAA</span>
+            </li>
+          </ol>
+          <p class="note">
+            「标注」那枚 <code>#999999</code> 对页底只有 2.7，原站拿它写日期与计数。
+            本页把同位置的日期改用 <code>#737373</code>（4.5，刚过 AA），其余照原值不改配色；
+            列表里的色块按原值渲染，所以它的读数仍低于 4.5，这是原站的选择，不是本页的。
+          </p>
+        </section>
+
+        <section class="block" id="type">
+          <header class="block-head">
+            <span class="block-num">02</span>
+            <div>
+              <p class="block-kicker">TYPE &amp; SPACE</p>
+              <h2>字号七档，字重 390 与 400</h2>
+            </div>
+          </header>
+          <p class="block-lede">
+            字号从 0.75rem 到 1.875rem 一共七档，行高 1.6 到 1.8，正文段落按 1.8 排。
+            真正让这套界面安静下来的是字重：正文与控件一律写 <code>390</code>，标题才用
+            <code>400</code>，
+            两档之差几乎看不出来，也再没有第三档用来强调。这需要可变字体或支持任意字重的系统字体才生效，
+            Windows 上的雅黑与 Segoe UI 会把它吸附到 400，所以本页也如实写 390——
+            支持的环境细一分，不支持的环境退回常规，不额外补粗体。层级因此只能靠字号与留白拉开。
+          </p>
+          <div class="type-list">
+            <div class="type-row">
+              <p class="type-sample type-sample--3xl">耶温博客</p>
+              <div class="type-spec">
+                <b>--font-size-3xl</b><span>1.875rem / 30px · 行高 1.4</span>
+                <span class="type-use">页面主标题</span>
+              </div>
+            </div>
+            <div class="type-row">
+              <p class="type-sample type-sample--2xl">在做的事</p>
+              <div class="type-spec">
+                <b>--font-size-2xl</b><span>1.5rem / 24px · 行高 1.4</span>
+                <span class="type-use">文章 h2</span>
+              </div>
+            </div>
+            <div class="type-row">
+              <p class="type-sample type-sample--xl">配置方法</p>
+              <div class="type-spec">
+                <b>--font-size-xl</b><span>1.25rem / 20px</span
+                ><span class="type-use">文章 h3</span>
+              </div>
+            </div>
+            <div class="type-row">
+              <p class="type-sample type-sample--base">
+                前端开发，喜欢将想法转化为可以看到与触摸的体验。
+              </p>
+              <div class="type-spec">
+                <b>--font-size-base</b><span>1rem / 16px · 行高 1.8</span>
+                <span class="type-use">正文</span>
+              </div>
+            </div>
+            <div class="type-row">
+              <p class="type-sample type-sample--sm">查看文章 · 文章列表 · 搜索文章</p>
+              <div class="type-spec">
+                <b>--font-size-sm</b><span>0.875rem / 14px</span>
+                <span class="type-use">控件与列表</span>
+              </div>
+            </div>
+            <div class="type-row">
+              <p class="type-sample type-sample--xs">耶温 · 2025-12-29 · (3)</p>
+              <div class="type-spec">
+                <b>--font-size-xs</b><span>0.75rem / 12px</span>
+                <span class="type-use">日期与计数</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="sub-head">间距六档，就地取用</h3>
+          <p class="block-lede">
+            间距令牌是 xs 4 / sm 8 / md 16 / lg 24 / xl 32 / 2xl 48，没有更细的刻度，
+            也从不出现「23px」这类中间值。下面按 1:1 画出六段的宽度，方便比对。
+          </p>
+          <div class="space-list">
+            <div class="space-row"><b>xs</b><i style="--w: 4px"></i><span>4px</span></div>
+            <div class="space-row"><b>sm</b><i style="--w: 8px"></i><span>8px</span></div>
+            <div class="space-row"><b>md</b><i style="--w: 16px"></i><span>16px</span></div>
+            <div class="space-row"><b>lg</b><i style="--w: 24px"></i><span>24px</span></div>
+            <div class="space-row"><b>xl</b><i style="--w: 32px"></i><span>32px</span></div>
+            <div class="space-row"><b>2xl</b><i style="--w: 48px"></i><span>48px</span></div>
+          </div>
+        </section>
+
+        <section class="block" id="texture">
+          <header class="block-head">
+            <span class="block-num">03</span>
+            <div>
+              <p class="block-kicker">TEXTURE</p>
+              <h2>三层底纹：网格、涟漪、雪</h2>
+            </div>
+          </header>
+          <p class="block-lede">
+            整页铺一张 40px 的方格纸，线是 1% 的黑；方格之上是一个 canvas，随机落墨，
+            涟漪由三圈不同半径的渐变环组成，越往外越淡。再往上是可选的雪花层。
+            三层都不参与布局，只挂在 <code>position: fixed</code> 的伪层上。
+          </p>
+          <div class="grid-demo" aria-hidden="true">
+            <div class="grid-demo-inner"></div>
+            <span class="grid-demo-label">40px 一格 · 说明页把线提到 3.8% 以便看清</span>
+          </div>
+          <div class="recipe">
+            <div class="recipe-row">
+              <b>网格</b>
+              <code
+                >background-image: linear-gradient(rgba(0,0,0,.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,.01) 1px, transparent 1px); background-size: 40px
+                40px;</code
+              >
+            </div>
+            <div class="recipe-row">
+              <b>涟漪</b>
+              <code>radial-gradient 描边 · 生命 280–420ms · 透明度 0.08–0.18 · 每次 2–4 环</code>
+            </div>
+            <div class="recipe-row">
+              <b>雪</b>
+              <code>canvas 六臂描边，随机初速与横向漂移，pointer-events: none</code>
+            </div>
+            <div class="recipe-row">
+              <b>毛玻璃</b>
+              <code>backdrop-filter: saturate(180%) blur(20px)</code>
+            </div>
+          </div>
+          <p class="note">
+            上面的控制坞可以切网格尺寸与动效；涟漪层会跟着整页走，鼠标划过也会带出一圈。
+          </p>
+        </section>
+
+        <section class="block" id="controls">
+          <header class="block-head">
+            <span class="block-num">04</span>
+            <div>
+              <p class="block-kicker">CONTROLS</p>
+              <h2>控件：字、线、一层毛玻璃</h2>
+            </div>
+          </header>
+          <p class="block-lede">
+            原站没有填充按钮，绝大多数「按钮」都是一行文字：hover 时铺一层 4% 的黑， 底下一道 1px
+            的线从中间向两侧展开。唯一的例外是右下角的浮动按钮，12px 圆角、毛玻璃、两道极淡的投影。
+          </p>
+
+          <h3 class="sub-head">文字按钮</h3>
+          <div class="ctrl-row">
+            <button class="text-btn" type="button">查看文章</button>
+            <button class="text-btn is-hover" type="button">悬停态</button>
+            <button class="text-btn is-active" type="button">按下态</button>
+            <button class="text-btn" type="button" disabled>禁用态</button>
+            <span class="ctrl-tag">1px 底线 · 4% 底 · 无圆角</span>
+          </div>
+
+          <h3 class="sub-head">树形导航</h3>
+          <div class="ctrl-panel">
+            <div class="tree tree--demo">
+              <div class="tree-cat">
+                <span class="tree-cat-head tree-cat-head--static">
+                  <span class="tree-caret is-open" aria-hidden="true">▶</span>
+                  <span class="tree-cat-name">开发</span>
+                  <span class="tree-cat-num">(3)</span>
+                </span>
+                <div class="tree-cat-body is-open">
+                  <span class="tree-item">Git 基础命令</span>
+                  <span class="tree-item is-active">Git 提交规范</span>
+                  <span class="tree-item">NPM 常见问题</span>
+                </div>
+              </div>
+            </div>
+            <p class="ctrl-tag">分组标题 12px 大写字距 0.5px，条目前置 2px 墨线与 2px 位移</p>
+          </div>
+
+          <h3 class="sub-head">搜索输入与标签</h3>
+          <div class="ctrl-panel">
+            <div class="search-field">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <circle cx="7" cy="7" r="5" />
+                <path d="M14 14 10.5 10.5" />
+              </svg>
+              <span class="search-field-text">搜索文章标题、简介与标签</span>
+            </div>
+            <div class="chip-row">
+              <span class="chip">Git</span>
+              <span class="chip">提交规范</span>
+              <span class="chip">开发规范</span>
+            </div>
+            <p class="ctrl-tag">输入框 4px 圆角、4% 底；标签 2px 圆角、1px 分线</p>
+          </div>
+
+          <h3 class="sub-head">贡献格与加载线</h3>
+          <div class="ctrl-panel">
+            <div class="contrib" role="img" aria-label="近 30 天的提交热力，示例数据">
+              <span class="contrib-day lv0"></span><span class="contrib-day lv1"></span>
+              <span class="contrib-day lv0"></span><span class="contrib-day lv2"></span>
+              <span class="contrib-day lv0"></span><span class="contrib-day lv3"></span>
+              <span class="contrib-day lv1"></span><span class="contrib-day lv0"></span>
+              <span class="contrib-day lv4"></span><span class="contrib-day lv0"></span>
+              <span class="contrib-day lv2"></span><span class="contrib-day lv1"></span>
+              <span class="contrib-day lv0"></span><span class="contrib-day lv0"></span>
+              <span class="contrib-day lv3"></span><span class="contrib-day lv1"></span>
+              <span class="contrib-day lv0"></span><span class="contrib-day lv2"></span>
+              <span class="contrib-day lv0"></span><span class="contrib-day lv1"></span>
+              <span class="contrib-day lv4"></span><span class="contrib-day lv0"></span>
+              <span class="contrib-day lv0"></span><span class="contrib-day lv2"></span>
+              <span class="contrib-day lv1"></span><span class="contrib-day lv0"></span>
+              <span class="contrib-day lv3"></span><span class="contrib-day lv0"></span>
+              <span class="contrib-day lv1"></span><span class="contrib-day lv0"></span>
+            </div>
+            <div class="loading-lines" role="img" aria-label="加载中的五道横线">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p class="ctrl-tag">11px 方格、2px 圆角、五级黑；加载态是五道 8px 短线依次扫过</p>
+          </div>
+
+          <h3 class="sub-head">浮动按钮（展开态）</h3>
+          <div class="ctrl-panel ctrl-panel--fab">
+            <div class="fab-demo">
+              <button class="fab-action" type="button" aria-label="回到顶部">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M4 7l4-4 4 4" /></svg>
+              </button>
+              <button class="fab-action" type="button" aria-label="目录">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h7" /></svg>
+              </button>
+              <button class="fab-action" type="button" aria-label="搜索">
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <circle cx="7" cy="7" r="5" />
+                  <path d="M14 14 10.5 10.5" />
+                </svg>
+              </button>
+              <button class="fab-main" type="button" aria-label="更多">
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="2.5" y="2.5" width="4.5" height="4.5" />
+                  <rect x="9" y="2.5" width="4.5" height="4.5" />
+                  <rect x="2.5" y="9" width="4.5" height="4.5" />
+                  <rect x="9" y="9" width="4.5" height="4.5" />
+                </svg>
+              </button>
+            </div>
+            <p class="ctrl-tag">42px 主钮 · 12px 圆角 · 50% 白 + 20px 模糊</p>
+          </div>
+        </section>
+
+        <section class="block" id="modules">
+          <header class="block-head">
+            <span class="block-num">05</span>
+            <div>
+              <p class="block-kicker">MODULES</p>
+              <h2>把控件拼成页面</h2>
+            </div>
+          </header>
+          <p class="block-lede">
+            三张版面都用上面这些控件拼出来，没有截图。文案取自原站真实文章（《关于我》《AICoding
+            使用与推荐》 《Git 提交规范》），读数是示例数据。
+          </p>
+
+          <article class="mod">
+            <header class="mod-head">
+              <h3>首页</h3>
+              <span class="mod-note">居中一栏 · 首屏留白 · 贡献图压底</span>
+            </header>
+            <div class="mock-home">
+              <div class="mock-home-grid" aria-hidden="true"></div>
+              <div class="mock-home-inner">
+                <h4>耶温博客</h4>
+                <p class="mock-home-sub">记录思考，分享知识</p>
+                <span class="text-btn is-static">查看文章</span>
+                <div class="mock-latest">
+                  <p class="mock-latest-title">最新文章</p>
+                  <div class="mock-latest-row">
+                    <span>AICoding 使用与推荐</span><em>2026-01-03</em>
+                  </div>
+                  <div class="mock-latest-row"><span>饮料食谱</span><em>2026-01-03</em></div>
+                  <div class="mock-latest-row"><span>关于我</span><em>2025-12-29</em></div>
+                </div>
+              </div>
+              <div class="mock-home-contrib" aria-hidden="true">
+                <span class="contrib-day lv0"></span><span class="contrib-day lv0"></span>
+                <span class="contrib-day lv1"></span><span class="contrib-day lv0"></span>
+                <span class="contrib-day lv0"></span><span class="contrib-day lv2"></span>
+                <span class="contrib-day lv0"></span><span class="contrib-day lv0"></span>
+                <span class="contrib-day lv1"></span><span class="contrib-day lv0"></span>
+                <span class="contrib-day lv0"></span><span class="contrib-day lv0"></span>
+                <span class="contrib-day lv3"></span><span class="contrib-day lv0"></span>
+                <span class="contrib-day lv0"></span><span class="contrib-day lv1"></span>
+                <span class="contrib-day lv0"></span><span class="contrib-day lv0"></span>
+              </div>
+            </div>
+          </article>
+
+          <article class="mod">
+            <header class="mod-head">
+              <h3>文章页</h3>
+              <span class="mod-note">240px 树 + 700px 正文 · 发丝线分隔</span>
+            </header>
+            <div class="mock-article">
+              <div class="mock-article-rail">
+                <p class="mock-rail-title">文章列表</p>
+                <div class="tree tree--mock">
+                  <div class="tree-cat">
+                    <span class="tree-cat-head tree-cat-head--static">
+                      <span class="tree-caret is-open" aria-hidden="true">▶</span>
+                      <span class="tree-cat-name">耶温</span>
+                      <span class="tree-cat-num">(3)</span>
+                    </span>
+                    <div class="tree-cat-body is-open">
+                      <span class="tree-item is-active">关于我</span>
+                      <span class="tree-item">关于本站</span>
+                      <span class="tree-item">站点推荐</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mock-article-body">
+                <h4>关于我</h4>
+                <p class="mock-article-meta">耶温 · 2025-12-29</p>
+                <hr class="hair" />
+                <p>你好，我是 <strong>耶温</strong>。</p>
+                <p>一个在代码与文字间游走的人，记录生活、思考与成长。</p>
+                <h5>在做的事</h5>
+                <ul>
+                  <li>React、Vue、TypeScript</li>
+                  <li>持续学习，偶尔分享</li>
+                </ul>
+                <blockquote>愿我们都能在代码的世界里，找到属于自己的那片空间。</blockquote>
+                <pre><code>npm run dev   # 本地预览
+npm run build # 产出静态文件</code></pre>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>类型</th>
+                      <th>说明</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>feat</td>
+                      <td>新功能</td>
+                    </tr>
+                    <tr>
+                      <td>fix</td>
+                      <td>修复缺陷</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </article>
+
+          <article class="mod">
+            <header class="mod-head">
+              <h3>搜索面板</h3>
+              <span class="mod-note">居中 600px · 毛玻璃 · 标题/简介/标签三路匹配</span>
+            </header>
+            <div class="mock-search">
+              <div class="mock-search-panel">
+                <div class="mock-search-head">
+                  <span>搜索文章</span>
+                  <span class="mock-search-close" aria-hidden="true">
+                    <svg viewBox="0 0 16 16">
+                      <path d="M3 3l10 10M13 3L3 13" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="mock-search-input">code</div>
+                <ul class="mock-search-list">
+                  <li>
+                    <p class="mock-search-item-title">AICoding 使用与推荐</p>
+                    <p class="mock-search-item-desc">
+                      介绍如何使用 AI 模型进行开发以及推荐一些好用的 AI 模型。
+                    </p>
+                    <div class="mock-search-meta">
+                      <span class="chip">开发/AICoding</span><em>2026-01-03</em>
+                    </div>
+                  </li>
+                  <li>
+                    <p class="mock-search-item-title">Git 提交规范</p>
+                    <p class="mock-search-item-desc">规范化 Git 提交信息的最佳实践。</p>
+                    <div class="mock-search-meta">
+                      <span class="chip">开发/Git</span><em>2024-05-16</em>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <footer class="colophon">
+      <div class="shell colophon-grid">
+        <div>
+          <span class="colophon-label">字体</span>
+          <p>系统无衬线栈（<code>system-ui</code> 起手），字重 390；代码用 Consolas 一脉的等宽。</p>
+        </div>
+        <div>
+          <span class="colophon-label">来源</span>
+          <p>
+            版式与令牌取自 <code>SimpleBlog/src/styles/variables.css</code> 与各组件样式表，
+            本页是静态还原，非另起一套视觉。
+          </p>
+        </div>
+        <div>
+          <span class="colophon-label">许可</span>
+          <p>SimpleBlog 以 MIT 许可发布，许可文本见本目录 <code>licenses/MIT.txt</code>。</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
