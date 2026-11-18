@@ -1,0 +1,863 @@
+/*============================================================================
+  3D 画廊 · 展厅
+
+  纯 CSS 3D：perspective 定透视，preserve-3d 让画框与墙共享一个空间，
+  环形排布用 rotateY(i * 72deg) translateZ(-r) 一次算完，不依赖渲染库。
+  展厅主题只换这一层的变量，画框内容（封面、说明、色板）不跟着变。
+============================================================================*/
+
+.gal {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--gal-bg);
+  color: var(--gal-fg);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  /* 画框与环的尺寸：窄屏靠 --fw 收，环半径同步收一档。 */
+  --fw: clamp(272px, 42vw, 600px);
+  --ch: calc(var(--fw) * 0.6667);
+  --fh: calc(var(--ch) + 92px);
+  --r: calc(var(--fw) * 1.36);
+  --step: 72deg;
+  --persp: 1750px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gal.is-dragging {
+  cursor: grabbing;
+}
+
+/*-------------------- 展厅主题 --------------------*/
+
+.gal[data-theme='ink'] {
+  --gal-bg: #0b0a07;
+  --gal-fg: #efe7d6;
+  --gal-muted: rgb(239 231 214 / 62%);
+  --gal-accent: #b4462f;
+  --gal-accent-ink: #bd604a;
+  --gal-seal: #b4462f;
+  --gal-on-seal: #fbf4e4;
+  --gal-wall: radial-gradient(72% 96% at 50% 20%, #473f30 0%, #262019 58%, #100e0a 100%);
+  --gal-wall-side: linear-gradient(90deg, #100d09 0%, #2c2619 62%, #191510 100%);
+  --gal-floor: radial-gradient(124% 100% at 50% 0%, #4d4334 0%, #241e16 52%, #0a0806 100%);
+  --gal-ceiling: linear-gradient(#070604, #16130e);
+  --gal-lamp: rgb(255 244 214 / 34%);
+  --gal-lamp-blur: 3px;
+  --gal-frame-a: #2b2317;
+  --gal-frame-b: #7b6339;
+  --gal-frame-c: #130f08;
+  --gal-mat: #f6f1e4;
+  --gal-mat-ink: #2b2620;
+  --gal-mat-muted: #746c5b;
+  --gal-mat-line: rgb(43 38 32 / 16%);
+  --gal-panel: rgb(28 24 17 / 84%);
+  --gal-panel-line: rgb(239 231 214 / 16%);
+  --gal-shadow: rgb(0 0 0 / 78%);
+  --gal-vignette: rgb(0 0 0 / 62%);
+  --gal-grain: 0.05;
+  --gal-scrim: #0b0a07;
+}
+
+.gal[data-theme='paper'] {
+  --gal-bg: #e6dfcd;
+  --gal-fg: #2b2620;
+  --gal-muted: rgb(43 38 32 / 70%);
+  --gal-accent: #9e3b2f;
+  --gal-accent-ink: #9e3b2f;
+  --gal-seal: #9e3b2f;
+  --gal-on-seal: #fbf4e4;
+  --gal-wall: radial-gradient(76% 100% at 50% 16%, #fbf6e9 0%, #efe7d4 62%, #d8cfb8 100%);
+  --gal-wall-side: linear-gradient(90deg, #cfc6ae 0%, #eee6d3 62%, #ded4bc 100%);
+  --gal-floor: radial-gradient(124% 100% at 50% 0%, #f2ebd9 0%, #ddd3ba 48%, #b9ae93 100%);
+  --gal-ceiling: linear-gradient(#f7f1e1, #e7dfcb);
+  --gal-lamp: rgb(255 252 240 / 72%);
+  --gal-lamp-blur: 6px;
+  --gal-frame-a: #8f3b2d;
+  --gal-frame-b: #d8b97e;
+  --gal-frame-c: #5d2419;
+  --gal-mat: #fdfaf1;
+  --gal-mat-ink: #2b2620;
+  --gal-mat-muted: #6f665a;
+  --gal-mat-line: rgb(43 38 32 / 14%);
+  --gal-panel: rgb(250 245 233 / 88%);
+  --gal-panel-line: rgb(43 38 32 / 18%);
+  --gal-shadow: rgb(74 62 44 / 42%);
+  --gal-vignette: rgb(60 48 32 / 26%);
+  --gal-grain: 0.035;
+  --gal-scrim: #e6dfcd;
+}
+
+.gal[data-theme='celadon'] {
+  --gal-bg: #0a1411;
+  --gal-fg: #e7efe9;
+  --gal-muted: rgb(231 239 233 / 62%);
+  --gal-accent: #c26a52;
+  --gal-accent-ink: #c26a52;
+  --gal-seal: #9f5b47;
+  --gal-on-seal: #fbf4e4;
+  --gal-wall: radial-gradient(72% 96% at 50% 20%, #35594f 0%, #1a2b25 58%, #0a1210 100%);
+  --gal-wall-side: linear-gradient(90deg, #0a120f 0%, #223a32 62%, #101a16 100%);
+  --gal-floor: radial-gradient(124% 100% at 50% 0%, #2f4a41 0%, #16231e 52%, #070d0b 100%);
+  --gal-ceiling: linear-gradient(#050a08, #101a16);
+  --gal-lamp: rgb(214 255 239 / 26%);
+  --gal-lamp-blur: 4px;
+  --gal-frame-a: #1f2b25;
+  --gal-frame-b: #6f8c7f;
+  --gal-frame-c: #0d1512;
+  --gal-mat: #eef2ec;
+  --gal-mat-ink: #22302a;
+  --gal-mat-muted: #5f6f66;
+  --gal-mat-line: rgb(34 48 42 / 16%);
+  --gal-panel: rgb(18 28 24 / 84%);
+  --gal-panel-line: rgb(231 239 233 / 16%);
+  --gal-shadow: rgb(0 0 0 / 74%);
+  --gal-vignette: rgb(0 0 0 / 58%);
+  --gal-grain: 0.05;
+  --gal-scrim: #0a1411;
+}
+
+.gal[data-theme='cube'] {
+  --gal-bg: #dedcd7;
+  --gal-fg: #1d1c1a;
+  --gal-muted: rgb(29 28 26 / 66%);
+  --gal-accent: #9e3b2f;
+  --gal-accent-ink: #9e3b2f;
+  --gal-seal: #9e3b2f;
+  --gal-on-seal: #fbf4e4;
+  --gal-wall: radial-gradient(80% 110% at 50% 12%, #fbfbf9 0%, #efeeea 62%, #dcdad4 100%);
+  --gal-wall-side: linear-gradient(90deg, #dedcd6 0%, #f5f4f1 62%, #e2e0da 100%);
+  --gal-floor: radial-gradient(124% 100% at 50% 0%, #f0efec 0%, #d9d7d1 48%, #b6b4ae 100%);
+  --gal-ceiling: linear-gradient(#fbfbf9, #eceae6);
+  --gal-lamp: rgb(255 255 255 / 82%);
+  --gal-lamp-blur: 8px;
+  --gal-frame-a: #1c1c1c;
+  --gal-frame-b: #3d3d3d;
+  --gal-frame-c: #0a0a0a;
+  --gal-mat: #ffffff;
+  --gal-mat-ink: #1d1c1a;
+  --gal-mat-muted: #6d6a64;
+  --gal-mat-line: rgb(29 28 26 / 12%);
+  --gal-panel: rgb(255 255 255 / 86%);
+  --gal-panel-line: rgb(29 28 26 / 14%);
+  --gal-shadow: rgb(60 58 52 / 34%);
+  --gal-vignette: rgb(40 38 34 / 22%);
+  --gal-grain: 0.02;
+  --gal-scrim: #dedcd7;
+}
+
+/*-------------------- 舞台与房间 --------------------*/
+
+.gal-stage {
+  position: absolute;
+  inset: 0;
+  perspective: var(--persp);
+  perspective-origin: 50% 46%;
+  transform-style: preserve-3d;
+}
+
+.gal-scene {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.gal-wall {
+  position: absolute;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+.gal-wall--back {
+  left: 0;
+  top: 0;
+  width: 2400px;
+  height: 1500px;
+  margin: -750px 0 0 -1200px;
+  transform: translateZ(-1350px);
+  background: var(--gal-wall);
+  box-shadow: inset 0 0 320px var(--gal-shadow);
+}
+
+.gal-wall--left,
+.gal-wall--right {
+  left: 0;
+  top: 0;
+  width: 2000px;
+  height: 1500px;
+  margin: -750px 0 0 -1000px;
+  background: var(--gal-wall-side);
+  box-shadow: inset 0 0 260px var(--gal-shadow);
+}
+
+.gal-wall--left {
+  transform: translateX(-1200px) translateZ(-350px) rotateY(90deg);
+}
+
+.gal-wall--right {
+  transform: translateX(1200px) translateZ(-350px) rotateY(-90deg);
+}
+
+.gal-wall--floor {
+  left: 0;
+  top: 0;
+  width: 2400px;
+  height: 2000px;
+  margin: -1000px 0 0 -1200px;
+  transform: translateY(750px) translateZ(-350px) rotateX(90deg);
+  background: var(--gal-floor);
+}
+
+.gal-wall--ceiling {
+  left: 0;
+  top: 0;
+  width: 2400px;
+  height: 2000px;
+  margin: -1000px 0 0 -1200px;
+  transform: translateY(-750px) translateZ(-350px) rotateX(-90deg);
+  background: var(--gal-ceiling);
+}
+
+.gal-lamp {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1500px;
+  height: 300px;
+  margin: -150px 0 0 -750px;
+  transform: translateY(-748px) translateZ(-560px) rotateX(90deg);
+  background: radial-gradient(58% 100% at 50% 50%, var(--gal-lamp), transparent 74%);
+  filter: blur(var(--gal-lamp-blur));
+  pointer-events: none;
+}
+
+/*-------------------- 画框环 --------------------*/
+
+.gal-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--ring, 0deg));
+  transition: transform 0.72s var(--ease);
+}
+
+.gal.is-dragging .gal-ring {
+  transition: none;
+}
+
+.gal.is-instant .gal-ring {
+  transition: none;
+}
+
+.gal-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--fw);
+  height: var(--fh);
+  margin: calc(var(--fh) / -2) 0 0 calc(var(--fw) / -2);
+  transform-style: preserve-3d;
+  transform: rotateY(calc(var(--i) * var(--step)))
+    translateZ(calc(-1 * var(--r) + var(--lift, 0px))) scale(var(--zoom, 1));
+  transition:
+    transform 0.72s var(--ease),
+    opacity 0.45s ease,
+    filter 0.45s ease;
+}
+
+.gal-turn {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--spin, 0deg));
+  transition: transform 0.62s var(--ease);
+}
+
+.gal-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  border-radius: 2px;
+  background: var(--gal-mat);
+  box-shadow:
+    0 0 0 11px var(--gal-frame-a),
+    0 0 0 13px var(--gal-frame-b),
+    0 0 0 14px var(--gal-frame-c),
+    0 46px 76px -22px var(--gal-shadow),
+    0 12px 26px -10px var(--gal-shadow);
+  overflow: hidden;
+}
+
+/* 环游时看到的是对面画框的背面：留素净背板，说明文字只在走近翻开时出现。 */
+.gal-frame:not([data-active='true']) .gal-face--back > * {
+  visibility: hidden;
+}
+
+.gal-face--back {
+  transform: rotateY(180deg);
+  padding: 26px 28px 24px;
+  gap: 14px;
+  color: var(--gal-mat-ink);
+}
+
+/* 封面面 */
+.gal-cover {
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 12px 12px 0;
+}
+
+.gal-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  border: 1px solid var(--gal-mat-line);
+}
+
+.gal-no {
+  position: absolute;
+  left: 22px;
+  bottom: 12px;
+  z-index: 1;
+  padding: 3px 9px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--gal-on-seal);
+  background: var(--gal-seal);
+}
+
+.gal-caption {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 14px 20px 16px;
+  color: var(--gal-mat-ink);
+}
+
+.gal-caption h2 {
+  flex: 1 1 auto;
+  font-size: calc(var(--fw) * 0.028 + 8px);
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gal-caption p {
+  flex: 0 0 auto;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--gal-mat-muted);
+}
+
+/* 说明面 */
+.gal-note-kicker {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  color: var(--gal-mat-muted);
+}
+
+.gal-note-title {
+  font-size: calc(var(--fw) * 0.036 + 6px);
+  line-height: 1.3;
+}
+
+.gal-note-text {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  font-size: calc(var(--fw) * 0.022 + 4px);
+  line-height: 1.95;
+  color: var(--gal-mat-ink);
+}
+
+.gal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gal-tags li {
+  padding: 2px 9px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--gal-mat-muted);
+  border: 1px solid var(--gal-mat-line);
+  border-radius: 999px;
+}
+
+.gal-more {
+  align-self: flex-start;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--gal-accent-ink);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+/*-------------------- 展签（聚焦态的两侧卡片）--------------------*/
+
+.gal-aside {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--fw) * 0.42);
+  padding: 18px 20px;
+  border-radius: 2px;
+  background: var(--gal-panel);
+  border: 1px solid var(--gal-panel-line);
+  box-shadow: 0 24px 48px -20px var(--gal-shadow);
+  color: var(--gal-fg);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.5s ease,
+    transform 0.62s var(--ease);
+  backdrop-filter: blur(3px);
+}
+
+.gal-aside--palette {
+  right: calc(100% + 34px);
+  transform: translateY(-50%) rotateY(26deg) translateX(-26px);
+}
+
+.gal-aside--spec {
+  left: calc(100% + 34px);
+  transform: translateY(-50%) rotateY(-26deg) translateX(26px);
+}
+
+.gal[data-mode='focus'] .gal-frame[data-active='true'] .gal-aside {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gal[data-mode='focus'] .gal-frame[data-active='true'] .gal-aside--palette {
+  transform: translateY(-50%) rotateY(26deg) translateX(0);
+}
+
+.gal[data-mode='focus'] .gal-frame[data-active='true'] .gal-aside--spec {
+  transform: translateY(-50%) rotateY(-26deg) translateX(0);
+}
+
+.gal-aside-k {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--gal-muted);
+  margin-bottom: 12px;
+}
+
+.gal-swatches {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gal-swatches li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--gal-fg);
+}
+
+.gal-swatches i {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 22%);
+}
+
+.gal-spec {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.gal-spec > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gal-panel-line);
+}
+
+.gal-spec > div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.gal-spec dt {
+  color: var(--gal-muted);
+  letter-spacing: 0.14em;
+}
+
+.gal-spec dd {
+  margin: 0;
+  text-align: right;
+}
+
+/*-------------------- 界面层 --------------------*/
+
+.gal-top {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 26px 30px 34px;
+  pointer-events: none;
+  color: var(--gal-fg);
+  /* 两侧画框会转到信息层底下：垫一层磨砂底，边界用蒙版化开。 */
+  isolation: isolate;
+}
+
+.gal-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.gal-seal {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--gal-on-seal);
+  background: var(--gal-seal);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 22%);
+}
+
+.gal-brand b {
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--gal-muted);
+}
+
+.gal-tools {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  pointer-events: auto;
+}
+
+.gal-themes {
+  display: flex;
+  gap: 8px;
+}
+
+.gal-theme {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--gal-panel-line);
+  border-radius: 999px;
+  background: linear-gradient(100deg, var(--s1) 0 50%, var(--s2) 50% 100%);
+  opacity: 0.55;
+  transition: opacity 0.24s ease;
+}
+
+.gal-theme:hover,
+.gal-theme[aria-pressed='true'] {
+  opacity: 1;
+}
+
+.gal-theme[aria-pressed='true'] {
+  outline: 1px solid var(--gal-accent);
+  outline-offset: 2px;
+}
+
+.gal-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.gal-dots button {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--gal-muted);
+  transition:
+    width 0.24s ease,
+    background 0.24s ease;
+}
+
+.gal-dots button[aria-current='true'] {
+  width: 20px;
+  border-radius: 3px;
+  background: var(--gal-seal);
+}
+
+.gal-hud {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 26px 32px 32px;
+  pointer-events: none;
+  color: var(--gal-fg);
+  isolation: isolate;
+}
+
+/* 信息层的磨砂底：画框转到上下边缘时被糊成一片柔和的光，字始终清楚。 */
+.gal-top::before,
+.gal-hud::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--gal-scrim);
+  backdrop-filter: blur(16px) saturate(115%);
+  -webkit-backdrop-filter: blur(16px) saturate(115%);
+}
+
+/* 蒙版只负责把底衬的上下边缘化开，正文区必须整片压住。 */
+.gal-top::before {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0 78%, transparent 100%);
+}
+
+.gal-hud::before {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 22%);
+}
+
+.gal-hud-k {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--gal-muted);
+}
+
+.gal-hud-t {
+  margin-top: 8px;
+  font-size: clamp(22px, 2.4vw, 34px);
+  line-height: 1.24;
+  letter-spacing: 0.02em;
+}
+
+.gal-hud-t em {
+  font-style: normal;
+  color: var(--gal-accent-ink);
+  margin: 0 0.28em;
+}
+
+.gal-hud-tip {
+  font-size: 11px;
+  line-height: 1.9;
+  letter-spacing: 0.16em;
+  text-align: right;
+  color: var(--gal-muted);
+}
+
+.gal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  pointer-events: auto;
+}
+
+.gal-btn {
+  padding: 7px 16px;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--gal-fg);
+  background: transparent;
+  border: 1px solid var(--gal-panel-line);
+  border-radius: 999px;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.gal-btn:hover {
+  border-color: var(--gal-accent);
+  background: rgb(158 59 47 / 12%);
+}
+
+.gal[data-mode='gallery'] .gal-actions [data-act] {
+  display: none;
+}
+
+/* 环游态只保留「继续翻阅」，翻页入口和信息栏同处一行。 */
+.gal-pager {
+  text-decoration: none;
+}
+
+.gal[data-mode='focus'] .gal-pager {
+  display: none;
+}
+
+/* 焦点遮罩之外整体压暗 */
+.gal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 96% at 50% 44%, transparent 34%, var(--gal-vignette) 100%);
+  opacity: 0.9;
+}
+
+.gal-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--gal-grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*-------------------- 响应式 --------------------*/
+
+@media (max-width: 1080px) {
+  .gal-aside {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .gal {
+    --fw: min(78vw, 420px);
+    --persp: 1200px;
+  }
+  .gal-top {
+    padding: 18px 16px;
+  }
+  .gal-brand b {
+    display: none;
+  }
+  .gal-hud {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 22px 18px 24px;
+  }
+  .gal-hud-tip {
+    text-align: left;
+  }
+  .gal-hud-t {
+    font-size: 22px;
+  }
+  .gal-theme {
+    width: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gal-ring,
+  .gal-frame,
+  .gal-turn,
+  .gal-aside,
+  .gal-theme {
+    transition: none !important;
+  }
+}
+
+/*-------------------- 焦点态 --------------------*/
+
+.gal[data-mode='focus'] .gal-frame:not([data-active='true']) {
+  opacity: 0.14;
+  filter: blur(3px) saturate(0.85);
+  pointer-events: none;
+}
+
+.gal-frame[data-active='true'] {
+  z-index: 2;
+}
+
+.gal[data-mode='focus'] .gal-frame[data-active='true'] {
+  --lift: calc(var(--r) * 0.48);
+}
+
+.gal-turn {
+  cursor: pointer;
+}
+
+.gal[data-mode='focus'] .gal-hud-tip {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gal-aside {
+  pointer-events: none;
+}
+
+.gal[data-mode='focus'] .gal-aside {
+  pointer-events: auto;
+}
+
+/*-------------------- 无脚本时的提示 --------------------*/
+
+.gal-noscript {
+  position: absolute;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  padding: 8px 18px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--gal-fg);
+  background: var(--gal-panel);
+  border: 1px solid var(--gal-panel-line);
+  border-radius: 999px;
+}
+
+.gal-noscript a {
+  color: var(--gal-accent-ink);
+  border-bottom: 1px solid currentColor;
+}
+
+/* 视觉上隐藏，但让读屏与搜索引擎拿到首页标题。 */
+.gal-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* 展厅占满视口，页面本身不再滚动。 */
+body:has(.gal) {
+  overflow: hidden;
+}

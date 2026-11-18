@@ -1,0 +1,497 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../lib/paths';
+import { readPublicImageSize } from '../lib/imageSize';
+import { galleryThemes, defaultTheme } from '../lib/galleryThemes';
+import '../styles/gallery.css';
+
+interface Props {
+  designs: CollectionEntry<'designs'>[];
+  total: number;
+  /** 还有下一页时给出页码，HUD 里保留一个「继续翻阅」入口。 */
+  nextPage?: number;
+}
+
+const { designs, total, nextPage } = Astro.props;
+
+// 环形节距与半径都跟着藏品数算：固定 72° 只对 5 件成立。
+// 半径取「相邻画框刚好不碰」的 1.98 倍，再夹在 1.36–1.9 之间——
+// 上界是为了让整环仍留在后墙（Z = -1350px）里面。
+const count = Math.max(designs.length, 1);
+const step = 360 / count;
+const touch = 0.5 / Math.tan(Math.PI / count);
+const radius = Math.min(1.9, Math.max(1.36, touch * 1.98));
+
+// 卷次与档案页同源，画廊里只用来标序号，不参与环形排布。
+const DIGITS = ['', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+function volumeOf(index: number) {
+  const n = index + 1;
+  if (n < 10) return DIGITS[n];
+  const tens = Math.floor(n / 10);
+  const ones = n % 10;
+  const prefix = tens === 1 ? '拾' : DIGITS[tens] + '拾';
+  return prefix + DIGITS[ones];
+}
+
+const items = designs.map((design, index) => ({
+  id: design.id,
+  index,
+  volume: volumeOf(index),
+  title: design.data.title,
+  category: design.data.category,
+  description: design.data.description,
+  tags: design.data.tags,
+  date: design.data.date,
+  version: design.data.version.replace(/^v/, ''),
+  colors: design.data.colors,
+  cover: withBase(design.data.cover),
+  size: readPublicImageSize(design.data.cover),
+  href: withBase('archive/' + design.id + '/'),
+}));
+---
+
+<div
+  class="gal"
+  id="gallery"
+  data-theme={defaultTheme}
+  data-mode="gallery"
+  role="region"
+  aria-label="设计收藏 · 3D 展厅"
+  style={'--step:' + step + 'deg;--r:calc(var(--fw) * ' + radius.toFixed(4) + ')'}
+>
+  <div class="gal-stage">
+    <div class="gal-scene">
+      <div class="gal-wall gal-wall--back"></div>
+      <div class="gal-wall gal-wall--left"></div>
+      <div class="gal-wall gal-wall--right"></div>
+      <div class="gal-wall gal-wall--floor"></div>
+      <div class="gal-wall gal-wall--ceiling"></div>
+      <div class="gal-lamp"></div>
+
+      <div class="gal-ring" id="gal-ring">
+        {items.map((item) => (
+          <article
+            class="gal-frame"
+            data-i={item.index}
+            data-active={item.index === 0 ? 'true' : 'false'}
+            style={'--i:' + item.index}
+          >
+            <div class="gal-turn">
+              <div class="gal-face gal-face--front">
+                <a class="gal-cover" href={item.href}>
+                  <img
+                    src={item.cover}
+                    alt={item.title + '界面封面'}
+                    width={item.size.width}
+                    height={item.size.height}
+                    loading={item.index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                  <span class="gal-no">卷 {item.volume}</span>
+                </a>
+                <div class="gal-caption">
+                  <h2>{item.title}</h2>
+                  <p>{item.category}</p>
+                </div>
+              </div>
+
+              <div class="gal-face gal-face--back">
+                <p class="gal-note-kicker">第 {item.volume} 号藏品</p>
+                <h2 class="gal-note-title">{item.title}</h2>
+                <p class="gal-note-text">{item.description}</p>
+                <ul class="gal-tags">
+                  {item.tags.map((tag) => (
+                    <li>{tag}</li>
+                  ))}
+                </ul>
+                <a class="gal-more" href={item.href}>
+                  查看完整档案
+                </a>
+              </div>
+            </div>
+
+            <div class="gal-aside gal-aside--palette" aria-hidden="true">
+              <p class="gal-aside-k">纸 色</p>
+              <ul class="gal-swatches">
+                {item.colors.map((color) => (
+                  <li style={'--c:' + color}>
+                    <i />
+                    <span>{color.toUpperCase()}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="gal-aside gal-aside--spec" aria-hidden="true">
+              <p class="gal-aside-k">藏 品 说 明</p>
+              <dl class="gal-spec">
+                <div>
+                  <dt>类目</dt>
+                  <dd>{item.category}</dd>
+                </div>
+                <div>
+                  <dt>版本</dt>
+                  <dd>V{item.version}</dd>
+                </div>
+                <div>
+                  <dt>入藏</dt>
+                  <dd>{item.date.replaceAll('-', '.')}</dd>
+                </div>
+                <div>
+                  <dt>卷次</dt>
+                  <dd>卷 {item.volume}</dd>
+                </div>
+              </dl>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <h1 class="gal-sr">设计收藏 · 界面存档展厅</h1>
+
+  <div class="gal-noise"></div>
+
+  <header class="gal-top">
+    <div class="gal-brand">
+      <span class="gal-seal" aria-hidden="true">
+        知简
+      </span>
+      <b>设 计 收 藏</b>
+    </div>
+    <div class="gal-tools">
+      <div class="gal-themes" role="group" aria-label="展厅主题">
+        {galleryThemes.map((theme) => (
+          <button
+            type="button"
+            class="gal-theme"
+            data-theme-id={theme.id}
+            style={'--s1:' + theme.swatch[0] + ';--s2:' + theme.swatch[1]}
+            aria-pressed={theme.id === defaultTheme ? 'true' : 'false'}
+            aria-label={'展厅主题：' + theme.label}
+            title={theme.label}
+          />
+        ))}
+      </div>
+      <div class="gal-dots" id="gal-dots" role="tablist" aria-label="藏品索引">
+        {items.map((item) => (
+          <button
+            type="button"
+            role="tab"
+            data-dot={item.index}
+            aria-current={item.index === 0 ? 'true' : 'false'}
+            aria-label={'第 ' + item.volume + ' 号：' + item.title}
+          />
+        ))}
+      </div>
+    </div>
+  </header>
+
+  <footer class="gal-hud">
+    <div>
+      <p class="gal-hud-k" id="gal-kicker">
+        展 厅 ／ 共 {total} 件藏品
+      </p>
+      <p class="gal-hud-t" id="gal-title">
+        {items[0]?.title}
+        <em>／</em>
+        {items[0]?.category}
+      </p>
+      <div class="gal-actions" id="gal-actions">
+        <button type="button" class="gal-btn" data-act="flip">
+          翻开说明
+        </button>
+        <a class="gal-btn" data-act="archive" href={items[0]?.href}>
+          完整档案
+        </a>
+        <button type="button" class="gal-btn" data-act="back">
+          回到环游
+        </button>
+      </div>
+      {nextPage && (
+        <a class="gal-btn gal-pager" href={withBase('page/' + nextPage + '/')}>
+          继续翻阅 · 第 {nextPage} 页
+        </a>
+      )}
+    </div>
+    <p class="gal-hud-tip" id="gal-tip">
+      左右拖动环游展厅
+      <br />
+      点击画框走近细看
+    </p>
+  </footer>
+
+  <noscript>
+    <div class="gal-noscript">
+      展厅需要脚本旋转；<a href={items[0]?.href ?? withBase()}>从第一件藏品</a>开始按页浏览。
+    </div>
+  </noscript>
+</div>
+
+<script>
+  const el = document.getElementById('gallery');
+  if (el) {
+    mount(el);
+  }
+
+  function mount(root: HTMLElement) {
+    const ring = root.querySelector<HTMLElement>('#gal-ring');
+    const frames = Array.from(root.querySelectorAll<HTMLElement>('.gal-frame'));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dot]'));
+    const themeButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-theme-id]'));
+    const titleEl = root.querySelector<HTMLElement>('#gal-title');
+    const kickerEl = root.querySelector<HTMLElement>('#gal-kicker');
+    const tipEl = root.querySelector<HTMLElement>('#gal-tip');
+    const archiveLink = root.querySelector<HTMLAnchorElement>('[data-act="archive"]');
+    const flipBtn = root.querySelector<HTMLButtonElement>('[data-act="flip"]');
+    const count = frames.length;
+    if (!ring || count === 0) return;
+    const ringEl = ring;
+    {
+      const step = 360 / count;
+      const STORE_THEME = 'zhijian-gallery-theme';
+      let angle = 0;
+      let active = 0;
+      let mode: 'gallery' | 'focus' = 'gallery';
+      let flipped = false;
+
+      const mod = (n: number) => ((n % count) + count) % count;
+      const indexAt = () => mod(Math.round(-angle / step));
+
+      function paint(immediate = false) {
+        if (immediate) root.classList.add('is-instant');
+        ringEl.style.setProperty('--ring', angle + 'deg');
+        if (immediate) requestAnimationFrame(() => root.classList.remove('is-instant'));
+
+        const current = indexAt();
+        if (current !== active) {
+          active = current;
+          syncHud();
+        }
+        frames.forEach((frame, i) => {
+          frame.dataset.active = i === active ? 'true' : 'false';
+        });
+        dots.forEach((dot, i) => {
+          dot.setAttribute('aria-current', i === active ? 'true' : 'false');
+        });
+      }
+
+      function syncHud() {
+        const frame = frames[active];
+        const name = frame?.querySelector('.gal-caption h2')?.textContent?.trim() ?? '';
+        const category = frame?.querySelector('.gal-caption p')?.textContent?.trim() ?? '';
+        const href = frame?.querySelector<HTMLAnchorElement>('.gal-cover')?.getAttribute('href');
+        if (titleEl) {
+          titleEl.textContent = name;
+          const em = document.createElement('em');
+          em.textContent = '／';
+          titleEl.append(em, category);
+        }
+        if (kickerEl) {
+          kickerEl.textContent =
+            mode === 'focus' ? '藏 品 ／ 就 近 细 看' : '展 厅 ／ 共 ' + count + ' 件藏品';
+        }
+        if (archiveLink && href) archiveLink.setAttribute('href', href);
+      }
+
+      function snapTo(index: number) {
+        const base = -index * step;
+        // 吸附到离当前角度最近的那一圈，避免跨半圈后倒着转回来。
+        const turns = Math.round((angle - base) / 360);
+        angle = base + turns * 360;
+        paint();
+      }
+
+      function enterFocus(index: number) {
+        mode = 'focus';
+        root.dataset.mode = 'focus';
+        flipped = false;
+        setSpin(0);
+        snapTo(index);
+        syncHud();
+        if (tipEl) tipEl.innerHTML = '左右拖动换藏品<br />Esc 回到环游';
+        flipBtn?.focus({ preventScroll: true });
+      }
+
+      function exitFocus() {
+        mode = 'gallery';
+        root.dataset.mode = 'gallery';
+        flipped = false;
+        setSpin(0);
+        if (tipEl) tipEl.innerHTML = '左右拖动环游展厅<br />点击画框走近细看';
+        syncHud();
+        dots[active]?.focus({ preventScroll: true });
+      }
+
+      function setSpin(deg: number) {
+        const turn = frames[active]?.querySelector<HTMLElement>('.gal-turn');
+        if (turn) turn.style.setProperty('--spin', deg + 'deg');
+        if (flipBtn) flipBtn.textContent = deg === 0 ? '翻开说明' : '合上说明';
+      }
+
+      function flip() {
+        if (mode !== 'focus') return;
+        flipped = !flipped;
+        setSpin(flipped ? 180 : 0);
+      }
+
+      function stepBy(delta: number) {
+        if (mode === 'focus') {
+          snapTo(mod(active + delta));
+          return;
+        }
+        angle -= delta * step;
+        active = indexAt();
+        paint();
+        syncHud();
+      }
+
+      // ---------- 拖动 ----------
+      let dragging = false;
+      let startX = 0;
+      let startAngle = 0;
+      let moved = 0;
+
+      const onDown = (event: PointerEvent) => {
+        if (event.button !== 0) return;
+        if ((event.target as HTMLElement).closest('.gal-aside, .gal-tools, .gal-actions')) return;
+        dragging = true;
+        moved = 0;
+        startX = event.clientX;
+        startAngle = angle;
+        root.classList.add('is-dragging');
+        // 有些环境（合成分发、部分触屏）不允许捕获，失败不能打断后续逻辑。
+        try {
+          root.setPointerCapture?.(event.pointerId);
+        } catch {
+          /* 没有活动指针就算了，拖动仍可用。 */
+        }
+      };
+
+      const onMove = (event: PointerEvent) => {
+        if (!dragging) return;
+        const dx = event.clientX - startX;
+        moved = Math.max(moved, Math.abs(dx));
+        angle = startAngle - dx * 0.16;
+        paint();
+      };
+
+      const onUp = (event: PointerEvent) => {
+        if (!dragging) return;
+        dragging = false;
+        root.classList.remove('is-dragging');
+        try {
+          if (root.hasPointerCapture?.(event.pointerId))
+            root.releasePointerCapture(event.pointerId);
+        } catch {
+          /* 同上。 */
+        }
+        if (moved > 6) {
+          snapTo(indexAt());
+          return;
+        }
+        // 没拖动就是点击：先转到被点的那一帧，再点一次才走近。
+        const frame = (event.target as HTMLElement).closest<HTMLElement>('.gal-frame');
+        if (!frame) return;
+        const index = Number(frame.dataset.i);
+        if (mode === 'focus') {
+          if (index === active) flip();
+          else snapTo(index);
+          return;
+        }
+        if (index === active) enterFocus(index);
+        else snapTo(index);
+      };
+
+      root.addEventListener('pointerdown', onDown);
+      root.addEventListener('pointermove', onMove);
+      root.addEventListener('pointerup', onUp);
+      root.addEventListener('pointercancel', onUp);
+
+      // 画框里的封面链接在展厅里只用来「走近」，没有脚本时才真的跳转。
+      root.addEventListener('click', (event) => {
+        const link = (event.target as HTMLElement).closest('a.gal-cover');
+        if (link) event.preventDefault();
+      });
+
+      root.addEventListener(
+        'wheel',
+        (event) => {
+          if (Math.abs(event.deltaY) < 4) return;
+          event.preventDefault();
+          stepBy(event.deltaY > 0 ? 1 : -1);
+        },
+        { passive: false },
+      );
+
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          stepBy(-1);
+        } else if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          stepBy(1);
+        } else if (event.key === 'Escape' && mode === 'focus') {
+          event.preventDefault();
+          exitFocus();
+        } else if ((event.key === 'Enter' || event.key === ' ') && mode === 'focus') {
+          const tag = (event.target as HTMLElement)?.tagName;
+          if (tag === 'BUTTON' || tag === 'A') return;
+          event.preventDefault();
+          flip();
+        }
+      });
+
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          const index = Number(dot.dataset.dot);
+          if (mode === 'focus') {
+            snapTo(index);
+          } else {
+            enterFocus(index);
+          }
+        });
+      });
+
+      flipBtn?.addEventListener('click', flip);
+      root.querySelector('[data-act="back"]')?.addEventListener('click', exitFocus);
+
+      // ---------- 主题 ----------
+      function applyTheme(id: string) {
+        root.dataset.theme = id;
+        themeButtons.forEach((btn) => {
+          btn.setAttribute('aria-pressed', btn.dataset.themeId === id ? 'true' : 'false');
+        });
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          const bg = getComputedStyle(root).getPropertyValue('--gal-bg').trim();
+          if (bg) meta.setAttribute('content', bg);
+        }
+      }
+
+      themeButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.themeId;
+          if (!id) return;
+          applyTheme(id);
+          try {
+            localStorage.setItem(STORE_THEME, id);
+          } catch {
+            /* 隐私模式下忽略 */
+          }
+        });
+      });
+
+      try {
+        const saved = localStorage.getItem(STORE_THEME);
+        if (saved) applyTheme(saved);
+      } catch {
+        /* 隐私模式下忽略 */
+      }
+
+      paint(true);
+      syncHud();
+    }
+  }
+</script>

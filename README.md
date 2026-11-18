@@ -2,7 +2,7 @@
 
 博客、网站与工具的界面存档。Astro + TypeScript 静态站，每份作品是独立 HTML/CSS/JS，用 iframe 隔离预览。
 
-首页每批 12 份，滚到底部自动加载，失败可重试；无脚本时「加载更多」链接照常翻页。详情预览支持设备宽度、50%–150% 缩放与全屏。
+首页是一座纯 CSS 3D 展厅：五面墙围成房间，藏品封面按环形排布，左右拖动或方向键环游，点击画框走近细看（可翻开背面读说明），Esc 退回环游。展厅提供墨夜、宣纸、青瓷、白盒四套主题，手动切换并记住选择；不依赖任何 3D 库。作品超过 12 份后，信息栏会出现「继续翻阅」进入列表页。详情页预览支持设备宽度、50%–150% 缩放与全屏。
 
 ## 开始
 
@@ -55,8 +55,8 @@ colors: ['#F6F3EC', '#292D28']
 ```text
 src/content/designs/   作品信息与说明
 src/pages/             首页、详情、404、robots
-src/components/        卡片与预览容器
-src/styles/            展示站样式
+src/components/        Gallery 展厅、列表卡片与预览容器
+src/styles/            展示站样式（global.css 与 gallery.css）
 public/works/<id>/     独立作品页面与资源
 public/brand/          书法标识与分享卡
 assets/                不进构建的源资源（全量字体、备用标识）

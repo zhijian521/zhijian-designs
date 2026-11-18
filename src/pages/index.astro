@@ -1,11 +1,12 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import Collection from '../components/Collection.astro';
+import Gallery from '../components/Gallery.astro';
 import { getDesignPages } from '../lib/designs';
 import { withBase } from '../lib/paths';
 const { pages, total } = await getDesignPages();
+const first = pages[0] ?? [];
 ---
 
-<SiteLayout path={withBase()}>
-  <Collection designs={pages[0] ?? []} total={total} nextPage={pages.length > 1 ? 2 : undefined} />
+<SiteLayout path={withBase()} description="在一个 3D 展厅里环游，走近每一份界面存档。">
+  <Gallery designs={first} total={total} nextPage={pages.length > 1 ? 2 : undefined} />
 </SiteLayout>
